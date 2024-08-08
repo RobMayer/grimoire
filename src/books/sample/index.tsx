@@ -120,7 +120,7 @@ export const Sample = {
                     }
                 }
 
-                @page temp {
+                @page main:first {
                     @top-center {
                         content: "Main First";
                     }
@@ -172,31 +172,46 @@ export const Sample = {
                     break-before: page;
                 }
 
-                main > h2 {
+                main h2 {
                     counter-increment: chapter-number;
                     string-set: chapter-title content(text);
+
+                    color: #048;
+                    font-size: 24pt;
                 }
                 
-                h2::before {
+                main > h2::before {
                     content: counter(chapter-number, upper-roman) " - ";
                 }
                     
-                    h3 {
-                        counter-increment: section-number;
-                    }
+                main h3 {
+                    counter-increment: section-number;
+                }
 
-                main > h2, section > h3 {
-                string-set: section-title content(text);
-                 
+                main h2, main h3 {
                     string-set: section-title content(text);
                 }
 
-                h3::before {
+                main h3::before {
                     content: counter(chapter-number, upper-roman) "." counter(section-number, decimal) " - ";
                 }
 
                 main:first-of-type {
                     counter-reset: page 1;
+                }
+
+                @media pagedjs-ignore {
+                    .pagedjs_sheet:has(main > h2) {
+                        counter-increment: chapter-indicator;
+                        counter-set: section-indicator 0;
+                    }
+                    .pagedjs_sheet:has(section > h3) {
+                        counter-increment: section-indicator;
+                    }
+                    .pagedjs_sheet:has(section > h3):has(main > h2) {
+                        counter-increment: chapter-indicator;
+                        counter-set: section-indicator 1;
+                    }
                 }
 
             `}</style>
@@ -217,7 +232,7 @@ export const Sample = {
                 </style>
                 <base href={"../src/books/sample/"} />
                 <title>Style Document Test</title>
-                <script src="https://unpkg.com/pagedjs@0.5.0-beta.1/dist/paged.polyfill.min.js"></script>
+                
             </head>
             <body data-test="test">
                 <hgroup>
@@ -378,6 +393,8 @@ export const Sample = {
                 </main>
                 <main>
                     <h2>Chapter 2 Title</h2>
+                    <figure>
+                        <figcaption>Test Table</figcaption>
                     <table>
                         <thead>
                             <tr>
@@ -457,6 +474,7 @@ export const Sample = {
                             </tr>
                         </tfoot>
                     </table>
+                    </figure>
                     <h4>Apple nearly successful promises no lady Thranduil.</h4>
                     <p>
                         Tomato dissuade wound girl plenty regretted barricade Hobbit's ai-'d. Evacuate bolted eye raven remove haven't feels encampment gather Anduin box. Don't you leave him, Samwise

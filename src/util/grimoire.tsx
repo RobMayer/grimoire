@@ -122,6 +122,8 @@ export const styled = {
     aside: generateStyled("aside"),
     article: generateStyled("article"),
     nav: generateStyled("nav"),
+    figure: generateStyled("figure"),
+    figcaption: generateStyled("figcaption"),
 
     p: generateStyled("p"),
     blockquote: generateStyled("blockquote"),
