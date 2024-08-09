@@ -5,13 +5,22 @@ header {
     page: preface;
     break-before: page;
 }
+header:first-of-type {
+    page: preface-init;
+}
 main {
     page: main;
     break-before: page;
 }
+main:first-of-type {
+    page: main-init;
+}
 footer {
     page: postface;
     break-before: page;
+}
+footer:first-of-type {
+    page: postface-init;
 }
 
 header h2 {
