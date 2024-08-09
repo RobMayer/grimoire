@@ -1,0 +1,40 @@
+hgroup {
+    page: title;
+}
+header {
+    page: preface;
+    break-before: page;
+}
+main {
+    page: main;
+    break-before: page;
+}
+footer {
+    page: postface;
+    break-before: page;
+}
+
+header h2 {
+    string-set: preface-title content(text);
+    counter-increment: preface-number;
+    color: #444;
+}
+header h2::before {
+    content: counter(preface-number, upper-latin) " - ";
+}
+
+main h2 {
+    string-set: chapter-title content(text);
+    counter-increment: chapter-number;
+    color: #444;
+}
+
+main h2::before {
+    content: counter(chapter-number, upper-roman) " - ";
+}
+
+h2 {
+    text-align: center;
+    font-size: 24pt;
+    font-variant: small-caps;
+}

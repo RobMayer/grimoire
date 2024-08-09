@@ -1,0 +1,242 @@
+html {
+    counter-set: chapter-number 0 chapter-indicator 0 section-indicator 0 preface-indicator 0;
+}
+
+@page {
+    size: letter;
+    margin: 0.5in;
+    @bottom-left-corner {
+        text-align: center;
+        vertical-align: middle;
+    }
+    @bottom-right-corner {
+        text-align: center;
+        vertical-align: middle;
+    }
+}
+
+main {
+    counter-set: page 1;
+}
+
+@page title {
+    size: letter;
+    margin: 0;
+    background-image: url("./cover.jpg");
+    background-position: center center;
+    background-size: cover;
+}
+
+@page preface:left {
+    @bottom-left-corner {
+        content: counter(page, lower-roman);
+        border-right: 1px solid #444;
+        margin: 4pt;
+    }
+    @left-top {
+        content: string(preface-title);
+        color: #444;
+        border-right: 1px solid #444;
+        white-space: nowrap;
+        text-orientation: mixed;
+        writing-mode: vertical-rl;
+        place-content: center start;
+        display: grid;
+        block-size: fit-content;
+        justify-self: center;
+        align-self: start;
+        padding-block: 0.25em;
+        padding-inline: 0.5em 3em;
+        margin-inline: -4pt 0;
+        font-size: 16pt;
+        font-variant: small-caps;
+    }
+    @top-left-corner {
+        content: counter(preface-indicator, upper-latin);
+        text-align: center;
+        vertical-align: middle;
+        background: #aaa;
+        color: black;
+        font-size: 16pt;
+        margin: 0 4pt 4pt 0;
+        padding: 4pt 0 0 4pt;
+    }
+}
+
+@page preface:right {
+    @bottom-right-corner {
+        content: counter(page, lower-roman);
+        border-left: 1px solid #444;
+        margin: 4pt;
+    }
+    @right-top {
+        content: string(preface-title);
+        color: #444;
+        border-right: 1px solid #444;
+        rotate: 180deg;
+        white-space: nowrap;
+        text-orientation: mixed;
+        writing-mode: vertical-rl;
+        place-content: center start;
+        display: grid;
+        block-size: fit-content;
+        justify-self: center;
+        align-self: start;
+        padding-block: 0.25em;
+        padding-inline: 3em 0.5em;
+        font-size: 16pt;
+        font-variant: small-caps;
+        margin-inline: -4pt 0;
+    }
+    @top-right-corner {
+        content: counter(preface-indicator, upper-latin);
+        text-align: center;
+        vertical-align: middle;
+        background: #aaa;
+        color: black;
+        font-size: 16pt;
+        margin: 0 0 4pt 4pt;
+        padding: 4pt 4pt 0 0;
+    }
+}
+
+@page preface:first {
+    @right-top {
+        background: none;
+        content: none;
+        border: none;
+    }
+    @left-top {
+        background: none;
+        content: none;
+        border: none;
+    }
+    @top-left-corner {
+        background: none;
+        content: none;
+        border: none;
+    }
+    @top-right-corner {
+        background: none;
+        content: none;
+        border: none;
+    }
+}
+
+@page main:left {
+    @bottom-left-corner {
+        content: counter(page);
+        border-right: 1px solid #444;
+        margin: 4pt;
+    }
+    @left-top {
+        content: string(chapter-title);
+        color: #048;
+        border-right: 1px solid #048;
+        white-space: nowrap;
+        text-orientation: mixed;
+        writing-mode: vertical-rl;
+        place-content: center start;
+        display: grid;
+        block-size: fit-content;
+        justify-self: center;
+        align-self: start;
+        padding-block: 0.25em;
+        padding-inline: 0.5em 3em;
+        margin-inline: -4pt 0;
+        font-size: 16pt;
+        font-variant: small-caps;
+    }
+    @top-left-corner {
+        content: counter(chapter-indicator, upper-roman);
+        text-align: center;
+        vertical-align: middle;
+        background: #048;
+        color: white;
+        font-size: 16pt;
+        margin: 0 4pt 4pt 0;
+    }
+    @bottom-left {
+        content: counter(chapter-indicator, upper-roman) "." counter(section-indicator) " - " string(section-title, first);
+        vertical-align: middle;
+        padding-left: 4pt;
+        margin-block: 4pt;
+    }
+}
+@page main:right {
+    @bottom-right-corner {
+        content: counter(page);
+        border-left: 1px solid #444;
+        margin: 4pt;
+    }
+    @right-top {
+        content: string(chapter-title);
+        color: #048;
+        border-right: 1px solid #048;
+        rotate: 180deg;
+        white-space: nowrap;
+        text-orientation: mixed;
+        writing-mode: vertical-rl;
+        place-content: center start;
+        display: grid;
+        block-size: fit-content;
+        justify-self: center;
+        align-self: start;
+        padding-block: 0.25em;
+        padding-inline: 3em 0.5em;
+        font-size: 16pt;
+        font-variant: small-caps;
+        margin-inline: -4pt 0;
+    }
+    @top-right-corner {
+        content: counter(chapter-indicator, upper-roman);
+        text-align: center;
+        vertical-align: middle;
+        background: #048;
+        color: white;
+        font-size: 16pt;
+        margin: 0 0 4pt 4pt;
+    }
+    @bottom-right {
+        content: counter(chapter-indicator, upper-roman) "." counter(section-indicator) " - " string(section-title, first);
+        vertical-align: middle;
+        padding-right: 4pt;
+        margin-block: 4pt;
+    }
+}
+
+@page main:first {
+    @top-center {
+    }
+    @left-top {
+        border: none;
+        content: none;
+        background: none;
+    }
+    @right-top {
+        border: none;
+        content: none;
+        background: none;
+    }
+    @top-right-corner {
+        border: none;
+        content: none;
+        background: none;
+    }
+    @top-left-corner {
+        border: none;
+        content: none;
+        background: none;
+    }
+}
+
+@page title {
+    background: #ccf;
+}
+
+@page postface {
+    background: aqua;
+}
+@page postface:first {
+    background: green;
+}

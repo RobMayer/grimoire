@@ -1,13 +1,12 @@
 import { writeFile } from "fs/promises";
 import { Sample } from "./books/sample";
+import { Grimoire } from "./util/grimoire";
 
 const doTheThing = async () => {
     // const browser = await puppeteer.launch({ headless: true });
     // const window = await browser.newPage();
 
-    const content = (await Sample.main) ?? "";
-
-    await writeFile("./tmp/sample.html", content);
+    await writeFile("./tmp/sample.html", (await (<Sample.main />)) ?? "");
     // await window.setContent(content, { waitUntil: "networkidle2" });
     // await window.goto(`file://${__dirname}/../tmp/sample.htm`, { waitUntil: "networkidle2" });
     // await window.pdf({
