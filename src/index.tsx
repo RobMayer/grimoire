@@ -2,7 +2,11 @@ import { writeFile } from "fs/promises";
 import { Sample } from "./books/sample";
 import { Grimoire } from "./util/grimoire";
 
-writeFile("./tmp/sample.html", (await (<Sample />)) ?? "")
+const doTheThing = async () => {
+    writeFile("./tmp/sample.html", (await (<Sample />)) ?? "");
+};
+
+doTheThing()
     .then(() => {
         console.log("html file generated");
     })

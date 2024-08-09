@@ -1,13 +1,21 @@
+:root {
+    --color-primary: #048;
+    --color-secondary: #444;
+    --color-secondary-bg: #aaa;
+}
+
+/* page assignments */
 hgroup {
     page: title;
 }
 header {
-    page: preface;
+    page: frontmatter-content;
     break-before: page;
 }
-header:first-of-type {
-    page: preface-init;
+header:has(nav) {
+    page: frontmatter-nav;
 }
+
 main {
     page: main;
     break-before: page;
@@ -16,34 +24,107 @@ main:first-of-type {
     page: main-init;
 }
 footer {
-    page: postface;
+    page: backmatter-content;
     break-before: page;
 }
-footer:first-of-type {
-    page: postface-init;
+footer:has(nav) {
+    page: backmatter-nav;
 }
 
-header h2 {
-    string-set: preface-title content(text);
-    counter-increment: preface-number;
-    color: #444;
+/* Runing Titles */
+
+hgroup h1 {
+    string-set: book-title content(text);
 }
-header h2::before {
-    content: counter(preface-number, upper-latin) " - ";
+hgroup address {
+    string-set: book-author content(text);
+}
+hgroup var {
+    string-set: book-version content(text);
+}
+
+header h2,
+footer h2 {
+    counter-increment: frontmatter-number;
+    string-set: frontmatter-title content(text);
+}
+
+header:has(nav) h2,
+footer:has(nav) h2 {
+    position: running(frontmatter-header);
+    margin: 0;
+    visibility: hidden;
 }
 
 main h2 {
     string-set: chapter-title content(text);
     counter-increment: chapter-number;
-    color: #444;
+}
+
+main h2,
+main h3 {
+    string-set: section-title content(text);
+}
+
+header h2::before {
+    content: counter(frontmatter-indicator, upper-latin) ": ";
+}
+
+footer h2::before {
+    content: counter(frontmatter-indicator, upper-latin) ": ";
 }
 
 main h2::before {
-    content: counter(chapter-number, upper-roman) " - ";
+    content: counter(chapter-number, upper-roman) ": ";
 }
 
 h2 {
     text-align: center;
     font-size: 24pt;
     font-variant: small-caps;
+    margin-bottom: 1em;
+    align-content: center;
+    border-bottom: 1px solid currentColor;
+}
+
+main h2 {
+    color: var(--color-primary);
+}
+
+/* Content layout */
+
+article {
+    column-count: 2;
+    column-gap: 0.125in;
+    column-fill: auto;
+}
+
+article p:first-of-type::first-letter {
+    initial-letter: 3;
+    color: red;
+}
+
+cite {
+    float: footnote;
+}
+
+::footnote-call {
+    font-weight: bold;
+    font-size: 80%;
+    vertical-align: super;
+}
+
+::footnote-marker {
+    content: counter(footnote-marker) " - ";
+    font-weight: bold;
+}
+
+nav#toc ul {
+    list-style: none;
+}
+nav#toc ul li {
+    break-inside: avoid;
+}
+nav#toc ul li a::after {
+    content: target-counter(attr(href), page);
 }
