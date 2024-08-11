@@ -1,7 +1,8 @@
 :root {
     --color-primary: #048;
     --color-secondary: #555;
-    --color-secondary-bg: #ccc;
+    --color-trim: #777;
+    --color-bg: #ccc;
 
     --body-text-font: "Bookinsanity";
     --body-text-size: 12pt;
@@ -77,10 +78,22 @@ body {
 }
 
 h2,
-h3 {
+h3,
+h4 {
     font-family: var(--title-font);
     font-variant: var(--title-variant);
     line-height: 1.3;
+    color: var(--page-color);
+    &::before {
+        content: attr(data-outline-token) " - ";
+    }
+}
+
+figure > figcaption {
+    &::before {
+        content: attr(data-outline-prefix) " " attr(data-outline-token) " - ";
+        color: var(--color-trim);
+    }
 }
 
 h2 {
@@ -92,6 +105,25 @@ h2 {
 
 h3 {
     font-size: 16pt;
+    margin-block: 0.25em;
+    padding-inline: 0.25em;
+    border-bottom: 1px solid currentColor;
+}
+
+h4 {
+    font-size: 12pt;
+    margin-block: 0.25em;
+    padding-inline: 0.25em;
+    border-bottom: 1px solid currentColor;
+}
+
+article > h2,
+section > h3 {
+    break-after: avoid;
+}
+
+section {
+    break-inside: avoid;
 }
 
 nav.toc,
@@ -119,7 +151,7 @@ nav.tof {
             flex-grow: 1;
             flex-shrink: 1;
             flex-basis: 0;
-            border-bottom: 1px dashed var(--color-secondary-bg);
+            border-bottom: 1px dashed var(--color-bg);
             margin-bottom: 0.25em;
         }
         & > .page {
@@ -154,7 +186,7 @@ nav.idx {
             flex-grow: 1;
             flex-shrink: 1;
             flex-basis: 0;
-            border-bottom: 1px dashed var(--color-secondary-bg);
+            border-bottom: 1px dashed var(--color-bg);
             margin-bottom: 0.25em;
         }
         & > .page {
@@ -167,15 +199,6 @@ nav.idx {
     & > div.subtopic > .title {
         margin-left: 1em;
     }
-}
-
-article > h2,
-section > h3 {
-    break-after: avoid;
-}
-
-section {
-    break-inside: avoid;
 }
 
 [data-sidenote-marker]::marker {
@@ -211,12 +234,8 @@ cite {
     font-size: 85%;
 }
 
-figure {
-    font-family: "Trebuchet MS";
-    margin: var(--room);
-}
-
 table {
+    font-family: "Trebuchet MS";
     font-size: 10.5pt;
 }
 
@@ -238,7 +257,59 @@ table:not(:has(thead):has(thead)) tr:nth-child(2n) {
     background: #ddd;
 }
 
+aside,
+figure {
+    border-top: 1px solid var(--page-color);
+    border-bottom: 1px solid var(--page-color);
+    padding: var(--less-room);
+    margin: var(--less-room);
+    break-inside: avoid;
+    box-decoration-break: clone;
+
+    & > .sidenote {
+        border-top: 1px solid var(--page-color);
+        margin-top: var(--less-room);
+    }
+}
+
+aside {
+    background: var(--color-bg);
+}
+
+figure {
+    width: fit-content;
+}
+
 figcaption {
+    font-family: "Trebuchet MS";
     font-weight: bold;
     font-variant: small-caps;
+}
+
+hgroup {
+    height: 100%;
+    padding: 0in;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    text-align: center;
+    font-family: "Trebuchet MS";
+    color: var(--color-primary);
+
+    h1 {
+        font-variant: small-caps;
+        font-size: 48pt;
+    }
+
+    div.subtitle {
+        font-size: 18pt;
+    }
+
+    div.edition {
+        font-size: 24pt;
+    }
+
+    div.author {
+        font-size: 16pt;
+    }
 }

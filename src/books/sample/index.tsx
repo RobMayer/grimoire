@@ -19,10 +19,18 @@ const Sample = async () => {
             </head>
             <body>
                 <hgroup>
-                    <h1>PME Standards</h1>
-                    <p>Volume I</p>
-                    <div data-book-author>ThatRobHuman</div>
-                    <div data-book-edition>v1.0</div>
+                    <div>
+                        <h1>PME Standards</h1>
+                        <div class="subtitle">Psuedo Mechanical Engineering</div>
+                    </div>
+                    <div>
+                        <div class="author" data-book-author>
+                            ThatRobHuman
+                        </div>
+                        <div class="edition" data-book-edition>
+                            v1.0
+                        </div>
+                    </div>
                 </hgroup>
                 <Book.Referential title={"Table of Contents"}>
                     <nav className={"toc"} id={"target-toc"}></nav>
@@ -32,9 +40,12 @@ const Sample = async () => {
                 </Book.Referential>
                 <Book.Supplemental title={"Preface"}>
                     <p>This is a thing</p>
-                    <Lipsum />
                     <Book.Section title={"Why"}>This is a subsection</Book.Section>
                     <Lipsum />
+                    <aside>
+                        <figcaption>Test Aside</figcaption>
+                        Test aside thing
+                    </aside>
                     <Lipsum />
                 </Book.Supplemental>
                 <Book.Chapter title={"Format"}>
@@ -44,6 +55,7 @@ const Sample = async () => {
                             With a <dfn data-index-term="chicken,roasted|popcorn">Fooote</dfn>
                         </cite>
                     </p>
+                    <Book.Section title={"Something"}>This is a Section</Book.Section>
                     <Book.Table title={"3x3 Matrix"}>
                         <thead>
                             <tr>

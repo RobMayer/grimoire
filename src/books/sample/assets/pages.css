@@ -74,7 +74,6 @@
         font-size: 18pt;
         font-family: var(--header-font);
         font-variant: var(--header-variant);
-        color: var(--page-color);
     }
     @right-top {
         rotate: 180deg;
@@ -92,7 +91,6 @@
         font-size: 18pt;
         font-family: var(--header-font);
         font-variant: var(--header-variant);
-        color: var(--page-color);
     }
     @bottom-left-corner {
         margin: var(--room) var(--room) var(--more-room) var(--more-room);
@@ -111,7 +109,6 @@
         font-variant: var(--trim-text-variant);
         font-weight: var(--trim-text-weight);
         font-size: var(--trim-text-size);
-        color: var(--page-color);
     }
     @bottom-center {
         content: "";
@@ -126,7 +123,6 @@
         font-variant: var(--trim-text-variant);
         font-weight: var(--trim-text-weight);
         font-size: var(--trim-text-size);
-        color: var(--page-color);
     }
     @bottom-right-corner {
         margin: var(--room) var(--more-room) var(--more-room) var(--room);
@@ -184,7 +180,39 @@
 }
 
 @page title {
-    background: #8f8;
+    @top-left-corner {
+        content: none;
+    }
+    @top-left {
+        content: none;
+    }
+    @top-right {
+        content: none;
+    }
+
+    @top-right-corner {
+        content: none;
+    }
+
+    @left-top {
+        content: none;
+    }
+    @right-top {
+        content: none;
+    }
+    @bottom-left-corner {
+        content: none;
+    }
+    @bottom-left {
+        content: none;
+    }
+
+    @bottom-right {
+        content: none;
+    }
+    @bottom-right-corner {
+        content: none;
+    }
 }
 
 @page referential {

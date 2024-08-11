@@ -66,16 +66,6 @@ export namespace Book {
         return roman;
     }
 
-    let sidematterCounter = 0;
-    let chapterCounter = 0;
-    let sectionCounter = 0;
-    let figureCounter = 0;
-    let tableCounter = 0;
-    let interludeCounter = 0;
-
-    let topLevelToken = "A";
-    let topLevelCount = 0;
-
     type Ctx = {
         table: number;
         diagram: number;
@@ -94,6 +84,7 @@ export namespace Book {
     };
 
     let tlCounter = 0;
+    let scCounter = 0;
 
     const typeToFamily = {
         supplemental: "sidematter",
@@ -104,7 +95,7 @@ export namespace Book {
 
     const tokenByFamily = {
         sidematter: (n: number) => toLatin(n),
-        chapter: (n: number) => `${n}`,
+        chapter: (n: number) => toRoman(n),
         interlude: (n: number) => toLatin(n).toLowerCase(),
     };
 
@@ -116,6 +107,7 @@ export namespace Book {
         const typeCounter = byFamilyCounters[family];
 
         const token = tokenByFamily[family](typeCounter);
+
         outlineContext.push({
             token,
             sections: [
@@ -126,6 +118,7 @@ export namespace Book {
                 },
             ],
         });
+        scCounter = 0;
 
         return (
             <article className={`${type} ${className ?? ""}`} data-outline-depth={`${type} outline section figure table diagram`}>
@@ -141,7 +134,7 @@ export namespace Book {
                     data-running-region-counter={tlCounter}
                     data-running-region-iter={typeCounter}
                     data-running-region-token={token}
-                    data-running-region-slug={`${[token, 0].join(".")} - ${title}}`}
+                    data-running-region-slug={`${[token, 0].join(".")} - ${title}`}
                 >
                     {title}
                 </h2>
@@ -150,153 +143,49 @@ export namespace Book {
         );
     };
 
-    export const Supplemental = ({ children, title, className }: { children?: Grimoire.Element; title: string; className?: string }) => {
-        sidematterCounter++;
-        topLevelCount++;
-
-        sectionCounter = 0;
-        tableCounter = 0;
-        figureCounter = 0;
-
-        topLevelToken = toLatin(sidematterCounter);
-
-        return (
-            <article className={`supplemental ${className ?? ""}`} data-outline-depth={"sidematter supplemental outline section figure table diagram"}>
-                <h2
-                    id={`outline-${[topLevelToken, 0].join("_")}`}
-                    data-outline-target={"supplemental outline"}
-                    data-outline-sort={[topLevelCount, 0].join(".")}
-                    data-outline-slug={`${topLevelToken} - ${title}`}
-                    data-outline-token={topLevelToken}
-                    data-outline-title={title}
-                    data-outline-prefix={""}
-                    data-running-region-title={title}
-                    data-running-region-counter={topLevelCount}
-                    data-running-region-iter={sidematterCounter}
-                    data-running-region-token={topLevelToken}
-                    data-running-region-slug={`${[topLevelToken, 0].join(".")} - ${title}`}
-                >
-                    {title}
-                </h2>
-                {children}
-            </article>
-        );
-    };
-
-    export const Referential = ({ children, title, className }: { children?: Grimoire.Element; title: string; className?: string }) => {
-        sidematterCounter++;
-        topLevelCount++;
-        sectionCounter = 0;
-        tableCounter = 0;
-        figureCounter = 0;
-
-        topLevelToken = toLatin(sidematterCounter);
-
-        return (
-            <article className={`referential ${className ?? ""}`} data-outline-depth={"sidematter referential outline section figure table diagram"}>
-                <h2
-                    id={`outline-${[topLevelToken, 0].join("_")}`}
-                    data-outline-target={"referential outline"}
-                    data-outline-sort={[topLevelCount, 0].join(".")}
-                    data-outline-slug={`${topLevelToken} - ${title}`}
-                    data-outline-token={topLevelToken}
-                    data-outline-title={title}
-                    data-outline-prefix={""}
-                    data-running-region-title={title}
-                    data-running-region-counter={topLevelCount}
-                    data-running-region-iter={sidematterCounter}
-                    data-running-region-token={topLevelToken}
-                    data-running-region-slug={`${[topLevelToken, 0].join(".")} - ${title}`}
-                >
-                    {title}
-                </h2>
-                {children}
-            </article>
-        );
-    };
-
-    export const Chapter = ({ children, title, className }: { children?: Grimoire.Element; title: string; className?: string }) => {
-        chapterCounter++;
-        topLevelCount++;
-        sectionCounter = 0;
-        tableCounter = 0;
-        figureCounter = 0;
-
-        topLevelToken = toRoman(chapterCounter);
-
-        return (
-            <article className={`chapter ${className ?? ""}`} data-outline-depth={"bodymatter chapter outline section figure table diagram"}>
-                <h2
-                    id={`outline-${[topLevelToken, 0].join("_")}`}
-                    data-outline-target={"chapter outline"}
-                    data-outline-sort={[topLevelCount, 0].join(".")}
-                    data-outline-slug={`${topLevelToken} - ${title}`}
-                    data-outline-token={topLevelToken}
-                    data-outline-title={title}
-                    data-outline-prefix={""}
-                    data-running-region-title={title}
-                    data-running-region-counter={topLevelCount}
-                    data-running-region-iter={sidematterCounter}
-                    data-running-region-token={topLevelToken}
-                    data-running-region-slug={`${[topLevelToken, 0].join(".")} - ${title}`}
-                >
-                    {title}
-                </h2>
-                {children}
-            </article>
-        );
-    };
-
-    export const Interlude = ({ children, title, className }: { children?: Grimoire.Element; title: string; className?: string }) => {
-        interludeCounter++;
-        topLevelCount++;
-        sectionCounter = 0;
-        tableCounter = 0;
-        figureCounter = 0;
-
-        topLevelToken = toRoman(interludeCounter).toLocaleLowerCase();
-
-        return (
-            <article className={`interlude ${className ?? ""}`} data-outline-depth={"bodymatter interlude outline section figure table diagram"}>
-                <h2
-                    id={`outline-${[topLevelToken, 0].join("_")}`}
-                    data-outline-target={"interlude outline"}
-                    data-outline-sort={[topLevelCount, 0].join(".")}
-                    data-outline-slug={`${topLevelToken} - ${title}`}
-                    data-outline-token={topLevelToken}
-                    data-outline-title={title}
-                    data-outline-prefix={""}
-                    data-running-region-title={title}
-                    data-running-region-counter={topLevelCount}
-                    data-running-region-iter={sidematterCounter}
-                    data-running-region-token={topLevelToken}
-                    data-running-region-slug={`${[topLevelToken, 0].join(".")} - ${title}`}
-                >
-                    {title}
-                </h2>
-                {children}
-            </article>
-        );
-    };
+    export const Supplemental = ({ children, title, className }: { children?: Grimoire.Element; title: string; className?: string }) => (
+        <TopLevel title={title} className={className} type={"supplemental"}>
+            {children}
+        </TopLevel>
+    );
+    export const Referential = ({ children, title, className }: { children?: Grimoire.Element; title: string; className?: string }) => (
+        <TopLevel title={title} className={className} type={"referential"}>
+            {children}
+        </TopLevel>
+    );
+    export const Chapter = ({ children, title, className }: { children?: Grimoire.Element; title: string; className?: string }) => (
+        <TopLevel title={title} className={className} type={"chapter"}>
+            {children}
+        </TopLevel>
+    );
+    export const Interlude = ({ children, title, className }: { children?: Grimoire.Element; title: string; className?: string }) => (
+        <TopLevel title={title} className={className} type={"interlude"}>
+            {children}
+        </TopLevel>
+    );
 
     export const Section = ({ children, title, className }: { children?: Grimoire.Element; title: string; className?: string }) => {
-        sectionCounter++;
-        tableCounter = 0;
-        figureCounter = 0;
+        scCounter++;
+        outlineContext[tlCounter - 1].sections.push({
+            table: 0,
+            diagram: 0,
+            figure: 0,
+        });
+        const tlToken = outlineContext[tlCounter - 1].token;
 
         return (
             <section className={`section ${className ?? ""}`} data-outline-depth={"section outline"}>
                 <h3
-                    id={`outline-${[topLevelToken, sectionCounter].join("_")}`}
+                    id={`outline-${[tlToken, scCounter].join("_")}`}
                     data-outline-target={"section outline"}
-                    data-outline-sort={[topLevelCount, sectionCounter].join(".")}
-                    data-outline-slug={`${[topLevelToken, sectionCounter].join(".")} - ${title}`}
-                    data-outline-token={[topLevelToken, sectionCounter].join(".")}
+                    data-outline-sort={[tlToken, scCounter].join(".")}
+                    data-outline-slug={`${[tlToken, scCounter].join(".")} - ${title}`}
+                    data-outline-token={[tlToken, scCounter].join(".")}
                     data-outline-title={title}
                     data-outline-prefix={""}
-                    data-running-section-slug={`${[topLevelToken, sectionCounter].join(".")} - ${title}`}
+                    data-running-section-slug={`${[tlToken, scCounter].join(".")} - ${title}`}
                     data-running-section-title={title}
-                    data-running-section-token={[topLevelToken, sectionCounter].join(".")}
+                    data-running-section-token={[tlToken, scCounter].join(".")}
                 >
                     {title}
                 </h3>
@@ -306,16 +195,17 @@ export namespace Book {
     };
 
     export const Figure = ({ children, title, className }: { children?: Grimoire.Element; title: string; className?: string }) => {
-        figureCounter++;
+        const figureCounter = ++outlineContext[tlCounter - 1].sections[scCounter].figure;
+        const tlToken = outlineContext[tlCounter - 1].token;
 
         return (
             <figure className={`figure ${className ?? ""}`}>
                 <figcaption
-                    id={`figure-${[topLevelToken, sectionCounter, figureCounter].join("_")}`}
+                    id={`figure-${[tlToken, scCounter, figureCounter].join("_")}`}
                     data-outline-target={"figure"}
-                    data-outline-sort={[topLevelCount, sectionCounter, figureCounter].join(".")}
-                    data-outline-slug={`Figure ${[topLevelToken, sectionCounter, figureCounter].join(".")} - ${title}`}
-                    data-outline-token={[topLevelToken, sectionCounter, figureCounter].join(".")}
+                    data-outline-sort={[tlCounter, scCounter, figureCounter].join(".")}
+                    data-outline-slug={`Figure ${[tlToken, scCounter, figureCounter].join(".")} - ${title}`}
+                    data-outline-token={[tlToken, scCounter, figureCounter].join(".")}
                     data-outline-title={title}
                     data-outline-prefix={"Figure"}
                 >
@@ -327,16 +217,17 @@ export namespace Book {
     };
 
     export const Table = ({ children, title, className }: { children?: Grimoire.Element; title: string; className?: string }) => {
-        tableCounter++;
+        const tableCounter = ++outlineContext[tlCounter - 1].sections[scCounter].table;
+        const tlToken = outlineContext[tlCounter - 1].token;
 
         return (
             <figure className={`table ${className ?? ""}`}>
                 <figcaption
-                    id={`table-${[topLevelToken, sectionCounter, tableCounter].join("_")}`}
+                    id={`table-${[tlToken, scCounter, tableCounter].join("_")}`}
                     data-outline-target={"table"}
-                    data-outline-sort={[topLevelCount, sectionCounter, tableCounter].join(".")}
-                    data-outline-slug={`Table ${[topLevelToken, sectionCounter, tableCounter].join(".")} - ${title}`}
-                    data-outline-token={[topLevelToken, sectionCounter, tableCounter].join(".")}
+                    data-outline-sort={[tlCounter, scCounter, tableCounter].join(".")}
+                    data-outline-slug={`Table ${[tlToken, scCounter, tableCounter].join(".")} - ${title}`}
+                    data-outline-token={[tlToken, scCounter, tableCounter].join(".")}
                     data-outline-title={title}
                     data-outline-prefix={"Table"}
                 >
