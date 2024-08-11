@@ -1,0 +1,23 @@
+aside,
+figure {
+    counter-set: sidenote 0 sidenote-marker 0;
+}
+
+[data-sidenote-marker] {
+    text-indent: 0;
+    display: list-item;
+    list-style-position: inside;
+    counter-increment: sidenode-marker;
+}
+[data-sidenote-marker]::marker {
+    content: counter(sidenode-marker) ". ";
+}
+
+[data-sidenote-call] {
+    all: unset;
+    counter-increment: sidenode;
+}
+
+[data-sidenote-call]::after {
+    content: counter(sidenode);
+}

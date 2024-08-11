@@ -1,129 +1,67 @@
 import { readFile } from "fs/promises";
-import { resetCSS, Grimoire } from "../../util/grimoire";
+import { Grimoire, Book } from "../../util/grimoire";
 import { Lipsum } from "../../widgets/lipsum";
-import { fixStyles, pageStyles } from "./pagestyles";
 
 const Sample = async () => {
-    const styles = await readFile(`${__dirname}/assets/styles.css`, "utf-8");
+    const postJS = await readFile(`${__dirname}/../../util/postprocess.js`, "utf-8");
 
     return (
         <html>
             <head>
-                <style>{styles}</style>
-                {/* <script src={"https://unpkg.com/pagedjs@0.5.0-beta.1/dist/paged.polyfill.min.js"}></script> */}
+                <link rel={"stylesheet"} href={`${__dirname}/assets/fonts.css`} />
+                <link rel={"stylesheet"} href={`${__dirname}/assets/pages.css`} />
+                <link rel={"stylesheet"} href={`${__dirname}/assets/styles.css`} />
+                <link data-pagedjs-ignore rel={"stylesheet"} href={`${__dirname}/assets/post.css`} />
+
+                <script src={"./paged.polyfill.min.js"}></script>
                 <title>Style Document Test</title>
             </head>
             <body>
                 <hgroup>
-                    <h1>Book Title</h1>
-                    <p>Book Subtitle</p>
-                    <address>Author</address>
-                    <div className="version">v1.0</div>
+                    <h1>PME Standards</h1>
+                    <p>Volume I</p>
+                    <div data-book-author>ThatRobHuman</div>
+                    <div data-book-edition>v1.0</div>
                 </hgroup>
-                <nav>
-                    <h2>Tabele of Contents</h2>
-                    <ul>
-                        <li>
-                            <a href="#">Ch Ref</a>
-                        </li>
-                        <li>
-                            <a href="#">Sec Ref</a>
-                        </li>
-                    </ul>
-                </nav>
-                <nav>
-                    <h2>Table of Figures</h2>
-                    <ul>
-                        <li>
-                            <a href="#">Ch Ref</a>
-                        </li>
-                        <li>
-                            <a href="#">Fig Ref</a>
-                        </li>
-                    </ul>
-                </nav>
-                <header>
-                    <h2>Preface or Intro</h2>
-                    <p>Paragraph</p>
-                </header>
-                <main>
-                    <h2>Chapter 1</h2>
-                    <p>Paragraph</p>
-                    <section>
-                        <h3>Section 1</h3>
-                        <p>Paragraph</p>
-                    </section>
-                </main>
-                <main>
-                    <h2>Chapter 2</h2>
-                    <p>Paragraph</p>
-                    <section>
-                        <h3>Section 1</h3>
-                        <p>Paragraph</p>
-                    </section>
-                    <section>
-                        <h3>Section 2</h3>
-                        <p>Paragraph</p>
-                        <figure>
-                            <figcaption>Some Image</figcaption>
-                        </figure>
-
-                        <table>
-                            <caption>Some Table</caption>
-                            <thead>
-                                <tr>
-                                    <th>Column 1</th>
-                                    <th>Column 2</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>1,1</td>
-                                    <td>2,1</td>
-                                </tr>
-                                <tr>
-                                    <td>1,2</td>
-                                    <td>2,2</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </section>
-                </main>
-                <aside>
-                    <h2>Interlude</h2>
-                </aside>
-                <main>
-                    <h2>Chapter 3</h2>
-                    <p>Paragraph</p>
-                    <section>
-                        <h3>Section 1</h3>
-                        <p>Paragraph</p>
-                    </section>
-                    <section>
-                        <h3>Section 2</h3>
-                        <p>Paragraph</p>
-                    </section>
-                </main>
-                <nav>
-                    <h2>Index</h2>
-                    <ul>
-                        <li>
-                            <a href="#">Some Text</a>
-                        </li>
-                    </ul>
-                </nav>
-                <nav>
-                    <h2>Glossary</h2>
-                    <dl>
-                        <dt>Word</dt>
-                        <dd>Definition</dd>
-                    </dl>
-                </nav>
-                <footer>
-                    <h2>Aftwrward</h2>
-                    <p>Paragraph</p>
-                </footer>
+                <Book.Referential title={"Table of Contents"}>
+                    <nav className={"toc"} id={"target-toc"}></nav>
+                </Book.Referential>
+                <Book.Referential title={"Figures and Tables"}>
+                    <nav className={"tof"} id={"target-tof"}></nav>
+                </Book.Referential>
+                <Book.Supplemental title={"Preface"}>
+                    <p>This is a thing</p>
+                    <Lipsum />
+                    <Book.Section title={"Why"}>This is a subsection</Book.Section>
+                    <Lipsum />
+                    <Lipsum />
+                </Book.Supplemental>
+                <Book.Chapter title={"Format"}>
+                    <p>
+                        This is a <dfn data-index-term="chicken,roasted|popcorn">test</dfn> paragraph{" "}
+                        <cite>
+                            With a <dfn data-index-term="chicken,roasted|popcorn">Fooote</dfn>
+                        </cite>
+                    </p>
+                    <Lipsum />
+                    <Book.Section title={"Another"}>Subsection </Book.Section>
+                    <Book.Figure title={"Test Figure"}>
+                        Something With a thing <cite>With its own footnote</cite>
+                    </Book.Figure>
+                </Book.Chapter>
+                <Book.Interlude title={"A Short Story"}>Some Interlude</Book.Interlude>
+                <Book.Chapter title={"Sprockets"}>
+                    <p>
+                        A thing about sprockets <dfn data-index-term="chicken,roasted|popcorn">test</dfn>
+                    </p>
+                </Book.Chapter>
+                <Book.Supplemental title={"Afterwords"}></Book.Supplemental>
+                <Book.Referential title={"Glossary"}>Test Entry</Book.Referential>
+                <Book.Referential title={"Index"}>
+                    <nav className={"idx"} id={"target-idx"}></nav>
+                </Book.Referential>
             </body>
+            <script>{postJS}</script>
         </html>
     );
 };

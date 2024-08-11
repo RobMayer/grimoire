@@ -8,38 +8,98 @@ export namespace Grimoire {
         className: "class",
     };
 
-    const parse = async (element: any): Promise<string> => {
-        const content = await element;
-        if (content === false || content === null || content === undefined) {
+    const parse = (children?: (JSX.Element | JSX.Element[])[]): JSX.Element[] => {
+        if (children) {
+            return children.reduce<JSX.Element[]>((acc, each) => {
+                if (Array.isArray(each)) {
+                    acc.push(...parse(each));
+                } else {
+                    acc.push(each);
+                }
+                return acc;
+            }, []);
+        }
+        return [];
+    };
+
+    export const jsxElement = (tag: any, props: Record<string, any> = {}, ...children: JSX.Element[]): JSX.Element => {
+        const parsedChildren = parse(children);
+        if (typeof tag === "function") {
+            return {
+                func: tag,
+                props,
+                children: parsedChildren,
+            };
+        }
+
+        const attributes = Object.entries(props ?? {}).reduce<{ [key: string]: string }>((acc, [k, v]) => {
+            const name = k in ATTR_ALIASES ? ATTR_ALIASES[k] : k;
+            const value = v;
+            if (value !== undefined && value !== null) {
+                acc[name] = value;
+            }
+            return acc;
+        }, {});
+
+        return {
+            tag,
+            attributes,
+            children: SELF_CLOSING.includes(tag) ? [] : parsedChildren,
+        };
+    };
+
+    export const jsxFragment = ({ children }: { children?: JSX.Element[] }): JSX.Element => {
+        return {
+            fragment: children ?? [],
+        };
+    };
+
+    export const render = (contents: JSX.Element): string => {
+        if (contents === undefined || contents === null) {
             return "";
         }
-        return Array.isArray(content) ? (await Promise.all(content)).map(parse).join("") : content;
-    };
-
-    export const jsxElement = async (tag: any, props: Record<string, any> = {}, ...children: any[]) => {
-        const parsedChildren = await jsxFragment({ children });
-        if (typeof tag === "function") {
-            return await tag({ children: parsedChildren, ...props });
+        if (typeof contents === "string") {
+            return contents;
         }
-
-        const attributes = Object.entries(props ?? {})
-            .map(([name, value]) => `${name in ATTR_ALIASES ? ATTR_ALIASES[name] : name}="${escapeAttrib(value)}"`)
-            .join(" ");
-
-        if (SELF_CLOSING.includes(tag)) {
-            return attributes ? `<${tag} ${attributes} />` : `<${tag} />`;
-        } else {
-            return attributes ? `<${tag} ${attributes}>${parsedChildren}</${tag}>` : `<${tag}>${parsedChildren}</${tag}>`;
+        if ("fragment" in contents) {
+            return contents.fragment.map(render).join("");
         }
-    };
-
-    export const jsxFragment = async ({ children }: any) => {
-        return (await Promise.all((Array.isArray(children) ? children : [children]).map(parse))).join("");
+        if ("tag" in contents) {
+            const attributes = Object.entries(contents.attributes ?? {})
+                .map(([name, value]) => `${name in ATTR_ALIASES ? ATTR_ALIASES[name] : name}="${escapeAttrib(value)}"`)
+                .join(" ");
+            if (contents.children.length === 0) {
+                return `<${contents.tag} ${attributes}></${contents.tag}>`;
+            }
+            return `<${contents.tag} ${attributes}>${contents.children.map(render).join("")}</${contents.tag}>`;
+        }
+        if ("func" in contents) {
+            const rendered = contents.func({ children: contents.children, ...contents.props });
+            return render(rendered);
+        }
+        return "";
     };
 
     export type Element = JSX.Element;
+
+    type PlainComponent = {
+        tag: string;
+        attributes: { [key: string]: string };
+        children: Element[];
+    };
+
+    type Fragment = {
+        fragment: Element[];
+    };
+
+    type FuncComponent = {
+        func: (props: any) => Element;
+        props: { [key: string]: any };
+        children: Element[];
+    };
+
     export namespace JSX {
-        export type Element = string | null | Promise<string | null>;
+        export type Element = string | null | PlainComponent | FuncComponent | undefined | Fragment;
         export interface IntrinsicElements {
             [elemName: string]: any;
         }
@@ -48,112 +108,276 @@ export namespace Grimoire {
 
 export const css = (str: TemplateStringsArray, ...args: any[]) => `<style> @scope { :scope {${str.reduce((acc, each) => `${acc}${args.shift()}${each}`)}}}</style>`;
 
-export const resetCSS = `
-                * {
-                    margin: 0;
-                    padding: 0;
-                    box-sizing: content-box;
-                    font-size: 100%;
-                    vertical-align: baseline;
-                    font: inherit;
-                    text-decoration: none;
-                    font-weight: normal;
-                    font-style: normal;
-                    white-space: normal;
-                    line-height: inherit;
-                }
-                html {
-                    line-height: 1;
-                }
-                ol, ul {
-                    list-style: none;
-                }
-                q, blockquote {
-                    quotes: none;
-                }
-                blockquote:before, blockquote:after,
-                q:before, q:after {
-	                content: '';
-	                content: none;
-                }
-                table {
-	                border-collapse: collapse;
-	                border-spacing: 0;
-                }
-                mark {
-                    background: none;
-                }
-                hr {
-                    border-color: currentColor;
-                }
-            `;
+/*
 
-const generateStyled = (tag: string) => {
-    return (str: TemplateStringsArray, ...args: any[]) => {
-        const parsedCss = css(str, ...args);
-        return ({ children, ...props }: any) => Grimoire.jsxElement(tag, props, parsedCss, children);
+
+    running-region-title:
+        chapter name
+    running-region-counter:
+        3 (does not reset during regions)
+    running-region-token:
+        I
+    running-region-iter:
+        1 (does reset between regions)
+    
+    running-focus-slug:
+        I.0 - chapter name
+        I.1 - section name
+    running-focus-token:
+        I.0
+    running-focus-title:
+        chapter name
+    
+    outline-type:
+        "content", "figure", "table", "diagram"
+    outline slug: (prefix, token, title)
+        I - chapter name
+        I.1 - secion name
+        Figure I.1.1 - figure name
+    sorter:
+        1.1.1
+
+
+
+    page-number-style:
+        roman,
+        arabic
+
+    toQuery:
+        outline: chapters and sections
+        referenec: chapters, tables, figures, diagrams
+
+*/
+
+export namespace Book {
+    const toLatin = (idx: number) => {
+        const UPPER_LATIN = "ABCDEFGHJKMNPQRSTUVWXYZ";
+        return UPPER_LATIN[idx - 1];
     };
-};
 
-export const styled = {
-    div: generateStyled("div"),
-    span: generateStyled("span"),
+    function toRoman(num: number) {
+        // Define the Roman numeral mappings
+        const val = [1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1];
+        const syb = ["M", "CM", "D", "CD", "C", "XC", "L", "XL", "X", "IX", "V", "IV", "I"];
 
-    h1: generateStyled("h1"),
-    h2: generateStyled("h2"),
-    h3: generateStyled("h3"),
-    h4: generateStyled("h4"),
-    h5: generateStyled("h5"),
-    h6: generateStyled("h6"),
-    hgroup: generateStyled("hgroup"),
+        let roman = "";
 
-    hr: generateStyled("hr"),
+        // Iterate over the value array
+        for (let i = 0; i < val.length; i++) {
+            // Determine the number of times the symbol can be used
+            while (num >= val[i]) {
+                roman += syb[i];
+                num -= val[i];
+            }
+        }
 
-    ul: generateStyled("ul"),
-    ol: generateStyled("ol"),
-    dl: generateStyled("dl"),
-    dt: generateStyled("dt"),
-    dd: generateStyled("dd"),
-    li: generateStyled("li"),
+        return roman;
+    }
 
-    body: generateStyled("body"),
-    main: generateStyled("main"),
-    section: generateStyled("section"),
-    aside: generateStyled("aside"),
-    article: generateStyled("article"),
-    nav: generateStyled("nav"),
-    figure: generateStyled("figure"),
-    figcaption: generateStyled("figcaption"),
+    let sidematterCounter = 0;
+    let chapterCounter = 0;
+    let sectionCounter = 0;
+    let figureCounter = 0;
+    let tableCounter = 0;
+    let interludeCounter = 0;
 
-    p: generateStyled("p"),
-    blockquote: generateStyled("blockquote"),
-    a: generateStyled("a"),
+    let topLevelToken = "A";
+    let topLevelCount = 0;
 
-    q: generateStyled("q"),
-    s: generateStyled("s"),
-    mark: generateStyled("mark"),
-    strong: generateStyled("strong"),
-    em: generateStyled("em"),
-    code: generateStyled("code"),
-    var: generateStyled("var"),
+    export const Supplemental = ({ children, title, className }: { children?: Grimoire.Element; title: string; className?: string }) => {
+        sidematterCounter++;
+        topLevelCount++;
 
-    del: generateStyled("del"),
-    ins: generateStyled("ins"),
-    sub: generateStyled("sub"),
-    sup: generateStyled("sup"),
-    u: generateStyled("u"),
+        sectionCounter = 0;
+        tableCounter = 0;
+        figureCounter = 0;
 
-    footer: generateStyled("footer"),
-    header: generateStyled("header"),
-    img: generateStyled("img"),
-    svg: generateStyled("svg"),
+        topLevelToken = toLatin(sidematterCounter);
 
-    table: generateStyled("table"),
-    tr: generateStyled("tr"),
-    th: generateStyled("th"),
-    td: generateStyled("td"),
-    thead: generateStyled("thead"),
-    tfoot: generateStyled("tfoot"),
-    br: generateStyled("br"),
-    wbr: generateStyled("wbr"),
-};
+        return (
+            <article className={`supplemental ${className ?? ""}`} data-outline-depth={"sidematter supplemental outline section figure table diagram"}>
+                <h2
+                    id={`outline-${[topLevelToken, 0].join("_")}`}
+                    data-outline-target={"supplemental outline"}
+                    data-outline-sort={[topLevelCount, 0].join(".")}
+                    data-outline-slug={`${topLevelToken} - ${title}`}
+                    data-outline-token={topLevelToken}
+                    data-outline-title={title}
+                    data-outline-prefix={""}
+                    data-running-region-title={title}
+                    data-running-region-counter={topLevelCount}
+                    data-running-region-iter={sidematterCounter}
+                    data-running-region-token={topLevelToken}
+                    data-running-region-slug={`${[topLevelToken, 0].join(".")} - ${title}`}
+                >
+                    {title}
+                </h2>
+                {children}
+            </article>
+        );
+    };
+
+    export const Referential = ({ children, title, className }: { children?: Grimoire.Element; title: string; className?: string }) => {
+        sidematterCounter++;
+        topLevelCount++;
+        sectionCounter = 0;
+        tableCounter = 0;
+        figureCounter = 0;
+
+        topLevelToken = toLatin(sidematterCounter);
+
+        return (
+            <article className={`referential ${className ?? ""}`} data-outline-depth={"sidematter referential outline section figure table diagram"}>
+                <h2
+                    id={`outline-${[topLevelToken, 0].join("_")}`}
+                    data-outline-target={"referential outline"}
+                    data-outline-sort={[topLevelCount, 0].join(".")}
+                    data-outline-slug={`${topLevelToken} - ${title}`}
+                    data-outline-token={topLevelToken}
+                    data-outline-title={title}
+                    data-outline-prefix={""}
+                    data-running-region-title={title}
+                    data-running-region-counter={topLevelCount}
+                    data-running-region-iter={sidematterCounter}
+                    data-running-region-token={topLevelToken}
+                    data-running-region-slug={`${[topLevelToken, 0].join(".")} - ${title}`}
+                >
+                    {title}
+                </h2>
+                {children}
+            </article>
+        );
+    };
+
+    export const Chapter = ({ children, title, className }: { children?: Grimoire.Element; title: string; className?: string }) => {
+        chapterCounter++;
+        topLevelCount++;
+        sectionCounter = 0;
+        tableCounter = 0;
+        figureCounter = 0;
+
+        topLevelToken = toRoman(chapterCounter);
+
+        return (
+            <article className={`chapter ${className ?? ""}`} data-outline-depth={"bodymatter chapter outline section figure table diagram"}>
+                <h2
+                    id={`outline-${[topLevelToken, 0].join("_")}`}
+                    data-outline-target={"chapter outline"}
+                    data-outline-sort={[topLevelCount, 0].join(".")}
+                    data-outline-slug={`${topLevelToken} - ${title}`}
+                    data-outline-token={topLevelToken}
+                    data-outline-title={title}
+                    data-outline-prefix={""}
+                    data-running-region-title={title}
+                    data-running-region-counter={topLevelCount}
+                    data-running-region-iter={sidematterCounter}
+                    data-running-region-token={topLevelToken}
+                    data-running-region-slug={`${[topLevelToken, 0].join(".")} - ${title}`}
+                >
+                    {title}
+                </h2>
+                {children}
+            </article>
+        );
+    };
+
+    export const Interlude = ({ children, title, className }: { children?: Grimoire.Element; title: string; className?: string }) => {
+        interludeCounter++;
+        topLevelCount++;
+        sectionCounter = 0;
+        tableCounter = 0;
+        figureCounter = 0;
+
+        topLevelToken = toRoman(interludeCounter).toLocaleLowerCase();
+
+        return (
+            <article className={`interlude ${className ?? ""}`} data-outline-depth={"bodymatter interlude outline section figure table diagram"}>
+                <h2
+                    id={`outline-${[topLevelToken, 0].join("_")}`}
+                    data-outline-target={"interlude outline"}
+                    data-outline-sort={[topLevelCount, 0].join(".")}
+                    data-outline-slug={`${topLevelToken} - ${title}`}
+                    data-outline-token={topLevelToken}
+                    data-outline-title={title}
+                    data-outline-prefix={""}
+                    data-running-region-title={title}
+                    data-running-region-counter={topLevelCount}
+                    data-running-region-iter={sidematterCounter}
+                    data-running-region-token={topLevelToken}
+                    data-running-region-slug={`${[topLevelToken, 0].join(".")} - ${title}`}
+                >
+                    {title}
+                </h2>
+                {children}
+            </article>
+        );
+    };
+
+    export const Section = ({ children, title, className }: { children?: Grimoire.Element; title: string; className?: string }) => {
+        sectionCounter++;
+        tableCounter = 0;
+        figureCounter = 0;
+
+        return (
+            <section className={`section ${className ?? ""}`} data-outline-depth={"section outline"}>
+                <h3
+                    id={`outline-${[topLevelToken, sectionCounter].join("_")}`}
+                    data-outline-target={"section outline"}
+                    data-outline-sort={[topLevelCount, sectionCounter].join(".")}
+                    data-outline-slug={`${[topLevelToken, sectionCounter].join(".")} - ${title}`}
+                    data-outline-token={[topLevelToken, sectionCounter].join(".")}
+                    data-outline-title={title}
+                    data-outline-prefix={""}
+                    data-running-section-slug={`${[topLevelToken, sectionCounter].join(".")} - ${title}`}
+                    data-running-section-title={title}
+                    data-running-section-token={[topLevelToken, sectionCounter].join(".")}
+                >
+                    {title}
+                </h3>
+                {children}
+            </section>
+        );
+    };
+
+    export const Figure = ({ children, title, className }: { children?: Grimoire.Element; title: string; className?: string }) => {
+        figureCounter++;
+
+        return (
+            <figure className={`figure ${className ?? ""}`}>
+                <figcaption
+                    id={`figure-${[topLevelToken, sectionCounter].join("_")}`}
+                    data-outline-target={"figure"}
+                    data-outline-sort={[topLevelCount, sectionCounter, figureCounter].join(".")}
+                    data-outline-slug={`Figure ${[topLevelToken, sectionCounter, figureCounter].join(".")} - ${title}`}
+                    data-outline-token={[topLevelToken, sectionCounter, figureCounter].join(".")}
+                    data-outline-title={title}
+                    data-outline-prefix={"Figure"}
+                >
+                    {title}
+                </figcaption>
+                {children}
+            </figure>
+        );
+    };
+
+    export const Table = ({ children, title, className }: { children?: Grimoire.Element; title: string; className?: string }) => {
+        tableCounter++;
+
+        return (
+            <figure className={`table ${className ?? ""}`}>
+                <figcaption
+                    id={`table-${[topLevelToken, sectionCounter].join("_")}`}
+                    data-outline-target={"table"}
+                    data-outline-sort={[topLevelCount, sectionCounter, tableCounter].join(".")}
+                    data-outline-slug={`Table ${[topLevelToken, sectionCounter, tableCounter].join(".")} - ${title}`}
+                    data-outline-token={[topLevelToken, sectionCounter, tableCounter].join(".")}
+                    data-outline-title={title}
+                    data-outline-prefix={"Table"}
+                >
+                    {title}
+                </figcaption>
+                <table>{children}</table>
+            </figure>
+        );
+    };
+}

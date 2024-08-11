@@ -1,0 +1,437 @@
+:root {
+    --room: 6pt;
+    --more-room: calc(var(--room) * 2);
+}
+
+@page {
+    margin: 0.75in;
+
+    @top-left-corner {
+        padding: var(--room) 0 0 var(--room);
+        margin: 0 var(--room) var(--room) 0;
+        font-size: 18pt;
+        color: white;
+        text-align: center;
+        vertical-align: center;
+        font-weight: bold;
+    }
+    @top-left {
+        vertical-align: middle;
+        text-align: left;
+        margin: var(--more-room) 0 var(--room) 0;
+        padding: 0 var(--room) 0 var(--room);
+        font-family: var(--header-font);
+        font-variant: var(--header-variant);
+    }
+    @top-center {
+        text-align: center;
+        vertical-align: center;
+        margin: var(--more-room) var(--room);
+        font-size: 24pt;
+        width: auto;
+        font-family: var(--title-font);
+        font-variant: var(--title-variant);
+    }
+    @top-right {
+        vertical-align: middle;
+        text-align: right;
+        margin: var(--more-room) 0 var(--room) 0;
+        padding: 0 var(--room) 0 var(--room);
+        font-family: var(--header-font);
+        font-variant: var(--header-variant);
+    }
+    @top-right-corner {
+        padding: var(--room) var(--room) 0 0;
+        margin: 0 0 var(--room) var(--room);
+        font-size: 18pt;
+        color: white;
+        text-align: center;
+        vertical-align: center;
+        font-weight: bold;
+    }
+    @left-top {
+        display: grid;
+        white-space: nowrap;
+        writing-mode: vertical-rl;
+        text-orientation: mixed;
+
+        align-content: center;
+        align-self: start;
+
+        margin-block: var(--more-room);
+        margin-inline: calc(var(--room) * -1) 0;
+        padding-inline: var(--more-room) 3em;
+
+        font-size: 18pt;
+        font-family: var(--header-font);
+        font-variant: var(--header-variant);
+    }
+    @right-top {
+        rotate: 180deg;
+        display: grid;
+        white-space: nowrap;
+        writing-mode: vertical-rl;
+        text-orientation: mixed;
+
+        align-content: center;
+        align-self: start;
+        margin-block: var(--more-room);
+        margin-inline: calc(var(--room) * -1) 0;
+        padding-inline: 3em var(--more-room);
+
+        font-size: 18pt;
+        font-family: var(--header-font);
+        font-variant: var(--header-variant);
+    }
+    @bottom-left-corner {
+        margin: var(--room) var(--room) var(--more-room) var(--more-room);
+        text-align: center;
+        vertical-align: center;
+        font-family: var(--header-font);
+        font-weight: bold;
+    }
+    @bottom-left {
+        vertical-align: middle;
+        text-align: left;
+        margin: var(--room) var(--more-room);
+        padding: 0 var(--room) var(--room) 0;
+        font-family: var(--header-font);
+        font-variant: var(--header-variant);
+    }
+    @bottom-center {
+        content: "";
+        max-width: 0;
+    }
+    @bottom-right {
+        vertical-align: middle;
+        text-align: right;
+        margin: var(--room) var(--more-room);
+        padding: 0 var(--room) var(--room) 0;
+        font-family: var(--header-font);
+        font-variant: var(--header-variant);
+    }
+    @bottom-right-corner {
+        margin: var(--room) var(--more-room) var(--more-room) var(--room);
+        text-align: center;
+        vertical-align: center;
+        font-family: var(--header-font);
+        font-weight: bold;
+    }
+    @footnote {
+        float: bottom;
+    }
+}
+
+@page title {
+    background: #8f8;
+}
+
+@page referential {
+    @top-center {
+        font-size: 24pt;
+        border-bottom: 1px solid var(--color-secondary);
+        content: string(region-title, first);
+        margin-block: calc(var(--room) * 2);
+        margin-inline: calc(var(--room) * -1);
+    }
+}
+
+@page referential:left {
+    @top-left-corner {
+        content: string(region-token, first);
+        background-color: var(--color-secondary);
+    }
+    @left-top {
+        content: string(region-title, first);
+        color: var(--color-secondary);
+        border-right: 1px solid var(--color-secondary);
+    }
+    @bottom-left-corner {
+        content: counter(trh-page, lower-roman);
+        border-right: 1px solid var(--color-secondary);
+    }
+    @bottom-left {
+        content: string(focus-slug);
+    }
+    @bottom-right {
+        content: string(book-title) " " string(book-edition);
+    }
+}
+@page referential:right {
+    @top-right-corner {
+        content: string(region-token, first);
+        background-color: var(--color-secondary);
+    }
+    @right-top {
+        content: string(region-title, first);
+        color: var(--color-secondary);
+        border-right: 1px solid var(--color-secondary);
+    }
+    @bottom-left {
+        content: string(book-title) " " string(book-edition);
+    }
+    @bottom-right {
+        content: string(focus-slug);
+    }
+    @bottom-right-corner {
+        content: counter(trh-page, lower-roman);
+        border-left: 1px solid var(--color-secondary);
+    }
+}
+
+@page supplemental {
+}
+
+@page supplemental:left {
+    @top-left-corner {
+        content: string(region-token, first);
+        background-color: var(--color-secondary);
+    }
+    @top-right {
+        content: string(book-author);
+    }
+    @left-top {
+        content: string(region-title, first);
+        color: var(--color-secondary);
+        border-right: 1px solid var(--color-secondary);
+    }
+    @bottom-left-corner {
+        content: counter(trh-page, lower-roman);
+        border-right: 1px solid var(--color-secondary);
+    }
+    @bottom-left {
+        content: string(focus-slug);
+    }
+}
+@page supplemental:right {
+    @top-right-corner {
+        content: string(region-token, first);
+        background-color: var(--color-secondary);
+    }
+    @top-left {
+        content: string(book-title) " " string(book-edition);
+    }
+    @right-top {
+        content: string(region-title, first);
+        color: var(--color-secondary);
+        border-right: 1px solid var(--color-secondary);
+    }
+    @bottom-right-corner {
+        border-left: 1px solid var(--color-secondary);
+        content: counter(trh-page, lower-roman);
+    }
+    @bottom-right {
+        content: string(focus-slug);
+    }
+}
+
+@page supplemental:first {
+    margin: 0.5in 0.75in 0.75in 0.75in;
+    @top-right-corner {
+        content: none;
+        border: none;
+        margin: 0;
+        padding: 0;
+        background: none;
+    }
+    @top-left {
+        content: none;
+    }
+    @top-right {
+        content: none;
+    }
+    @top-left-corner {
+        content: none;
+        border: none;
+        margin: 0;
+        padding: 0;
+        background: none;
+    }
+    @left-top {
+        content: none;
+        border: none;
+        margin: 0;
+        padding: 0;
+        background: none;
+    }
+    @right-top {
+        content: none;
+        border: none;
+        margin: 0;
+        padding: 0;
+        background: none;
+    }
+}
+
+@page main {
+}
+
+@page main:left {
+    @top-left-corner {
+        content: string(region-token, first);
+        background-color: var(--color-primary);
+    }
+    @left-top {
+        content: string(region-title, first);
+        color: var(--color-primary);
+        border-right: 1px solid var(--color-primary);
+    }
+    @top-right {
+        content: string(book-author);
+    }
+    @bottom-left-corner {
+        content: counter(trh-page);
+        border-right: 1px solid var(--color-primary);
+    }
+
+    @bottom-left {
+        content: string(focus-slug);
+    }
+}
+@page main:right {
+    @top-right-corner {
+        content: string(region-token, first);
+        background-color: var(--color-primary);
+    }
+    @top-left {
+        content: string(book-title) " " string(book-edition);
+    }
+    @right-top {
+        content: string(region-title, first);
+        color: var(--color-primary);
+        border-right: 1px solid var(--color-primary);
+    }
+    @bottom-right {
+        content: string(focus-slug);
+    }
+    @bottom-right-corner {
+        border-left: 1px solid var(--color-primary);
+        content: counter(trh-page);
+    }
+}
+
+@page main:first {
+    margin: 0.5in 0.75in 0.75in 0.75in;
+    @top-right-corner {
+        content: none;
+        border: none;
+        margin: 0;
+        padding: 0;
+        background: none;
+    }
+    @top-left {
+        content: none;
+    }
+    @top-right {
+        content: none;
+    }
+    @top-left-corner {
+        content: none;
+        border: none;
+        margin: 0;
+        padding: 0;
+        background: none;
+    }
+    @left-top {
+        content: none;
+        border: none;
+        margin: 0;
+        padding: 0;
+        background: none;
+    }
+    @right-top {
+        content: none;
+        border: none;
+        margin: 0;
+        padding: 0;
+        background: none;
+    }
+}
+
+@page interlude {
+    background: #555;
+}
+
+@page interlude-gallery {
+    background: #333;
+}
+
+hgroup {
+    page: title;
+    break-before: page;
+}
+
+article.supplemental {
+    page: supplemental;
+    break-before: page;
+}
+
+article.referential {
+    page: referential;
+    break-before: page;
+}
+
+article.chapter {
+    page: main;
+    break-before: page;
+}
+
+article.interlude {
+    page: interlude;
+    break-before: page;
+}
+
+article.interlude.gallery {
+    page: interlude-gallery;
+}
+
+cite:not(aside *):not(figure *) {
+    float: footnote;
+}
+
+aside,
+figure {
+    break-inside: avoid;
+}
+
+[data-running-region-title] {
+    string-set: region-title attr(data-running-region-title);
+}
+[data-running-region-token] {
+    string-set: region-token attr(data-running-region-token);
+}
+[data-running-region-counter] {
+    string-set: region-counter attr(data-running-region-counter);
+}
+[data-running-region-iter] {
+    string-set: region-iter attr(data-running-region-iter);
+}
+
+[data-running-section-title] {
+    string-set: section-title attr(data-running-section-title);
+}
+[data-running-section-token] {
+    string-set: section-token attr(data-running-section-token);
+}
+[data-running-section-slug] {
+    string-set: section-slug attr(data-running-section-slug), section-slug-fallback attr(data-running-section-slug);
+}
+[data-running-region-slug] {
+    string-set: region-slug attr(data-running-region-slug), section-slug-fallback attr(data-running-region-slug);
+}
+
+article.referential > h2 {
+    display: none;
+}
+
+h1 {
+    string-set: book-title content(text);
+}
+
+[data-book-edition] {
+    string-set: book-edition content(text);
+}
+
+[data-book-author] {
+    string-set: book-author content(text);
+}

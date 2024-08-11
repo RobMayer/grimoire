@@ -4,11 +4,6 @@ export const Lipsum = () => {
     return (
         <>
             <p>
-                Arcu viverra lobortis ad euismod mus montes. Parturient, metus netus himenaeos eleifend natoque vestibulum vitae auctor conubia. Gravida egestas litora class enim in ridiculus fames
-                erat in phasellus ornare. Pellentesque, sodales potenti maecenas volutpat! Tempor mi tempor sodales nostra metus penatibus. Morbi est cum mi proin egestas tempor dapibus. Nam curae;
-                ullamcorper lectus pellentesque diam nostra metus. Dictumst dignissim integer egestas.
-            </p>
-            <p>
                 Maecenas in dapibus inceptos cum mattis semper montes. Justo luctus augue eleifend diam sapien ultrices parturient nunc curae;. Quis magna luctus torquent molestie primis curabitur id?
                 Egestas, malesuada iaculis rutrum ultricies scelerisque etiam. Augue ornare varius aliquet. Cum penatibus consectetur lacus potenti. Consequat gravida torquent blandit neque neque
                 potenti, mollis rhoncus tincidunt nibh non faucibus. Donec dignissim, vel pretium. Augue enim nullam metus, odio curae; himenaeos. Quis litora.
