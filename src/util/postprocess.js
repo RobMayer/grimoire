@@ -177,10 +177,10 @@
     function setupTof(content) {
         const outlineElements = [...content.querySelectorAll("[data-outline-target~=table],[data-outline-target~=figure],[data-outline-target~=diagram]")];
         const target = content.querySelector("nav#target-tof");
+        const renderedAncestors = new Set();
 
         const listItems = outlineElements
             .map((each) => {
-                const renderedAncestors = new Set();
                 const ancestors = ancestorQuery(each, "[data-outline-depth~=figure],[data-outline-depth~=table],[data-outline-depth~=diagram]");
                 const depth = ancestors.length;
 

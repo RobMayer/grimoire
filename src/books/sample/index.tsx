@@ -1,6 +1,7 @@
 import { readFile } from "fs/promises";
-import { Grimoire, Book } from "../../util/grimoire";
+import { Grimoire } from "../../util/grimoire";
 import { Lipsum } from "../../widgets/lipsum";
+import { Book } from "../../util/book";
 
 const Sample = async () => {
     const postJS = await readFile(`${__dirname}/../../util/postprocess.js`, "utf-8");
@@ -43,11 +44,53 @@ const Sample = async () => {
                             With a <dfn data-index-term="chicken,roasted|popcorn">Fooote</dfn>
                         </cite>
                     </p>
+                    <Book.Table title={"3x3 Matrix"}>
+                        <thead>
+                            <tr>
+                                <th>C1</th>
+                                <th>C2</th>
+                                <th>C3</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>R1,1</td>
+                                <td>R1,2</td>
+                                <td>R1,3</td>
+                            </tr>
+                            <tr>
+                                <td>R3,1</td>
+                                <td>R3,2</td>
+                                <td>R3,3</td>
+                            </tr>
+                            <tr>
+                                <td>R3,1</td>
+                                <td>R3,2</td>
+                                <td>R3,3</td>
+                            </tr>
+                        </tbody>
+                    </Book.Table>
                     <Lipsum />
-                    <Book.Section title={"Another"}>Subsection </Book.Section>
-                    <Book.Figure title={"Test Figure"}>
-                        Something With a thing <cite>With its own footnote</cite>
-                    </Book.Figure>
+                    <Book.Table title={"A table with no head"}>
+                        <tr>
+                            <th>R1,1</th>
+                            <th>R1,2</th>
+                            <th>
+                                R1,3<cite>With a footnote even</cite>
+                            </th>
+                        </tr>
+                        <tr>
+                            <td>R3,1</td>
+                            <td>R3,2</td>
+                            <td>R3,3</td>
+                        </tr>
+                        <tr>
+                            <td>R3,1</td>
+                            <td>R3,2</td>
+                            <td>R3,3</td>
+                        </tr>
+                    </Book.Table>
+                    <Lipsum />
                 </Book.Chapter>
                 <Book.Interlude title={"A Short Story"}>Some Interlude</Book.Interlude>
                 <Book.Chapter title={"Sprockets"}>
