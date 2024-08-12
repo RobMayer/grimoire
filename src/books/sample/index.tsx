@@ -14,14 +14,14 @@ const Sample = async () => {
                 <link rel={"stylesheet"} href={`${__dirname}/assets/styles.css`} />
                 <link data-pagedjs-ignore rel={"stylesheet"} href={`${__dirname}/assets/post.css`} />
 
-                <script src={"./paged.polyfill.min.js"}></script>
+                <script src={"../lib/paged.canary.polyfill.min.js"}></script>
                 <title>Style Document Test</title>
             </head>
             <body>
                 <hgroup>
                     <div>
-                        <h1>PME Standards</h1>
-                        <div class="subtitle">Psuedo Mechanical Engineering</div>
+                        <h1>Doc Test</h1>
+                        <div class="subtitle">A Sandbox to test Styles in</div>
                     </div>
                     <div>
                         <div class="author" data-book-author>
@@ -39,50 +39,96 @@ const Sample = async () => {
                     <nav className={"tof"} id={"target-tof"}></nav>
                 </Book.Referential>
                 <Book.Supplemental title={"Preface"}>
-                    <p>This is a thing</p>
-                    <Book.Section title={"Why"}>This is a subsection</Book.Section>
-                    <Lipsum />
-                    <aside>
-                        <figcaption>Test Aside</figcaption>
-                        Test aside thing
-                    </aside>
-                    <Lipsum />
+                    <Lipsum count={2} />
+                    <Book.Section title={"Section One"}>
+                        <Lipsum count={2} />
+                    </Book.Section>
+                    <Lipsum count={2} />
                 </Book.Supplemental>
-                <Book.Chapter title={"Format"}>
-                    <p>
-                        This is a <dfn data-index-term="chicken,roasted|popcorn">test</dfn> paragraph{" "}
-                        <cite>
-                            With a <dfn data-index-term="chicken,roasted|popcorn">Fooote</dfn>
-                        </cite>
-                    </p>
-                    <Book.Section title={"Something"}>This is a Section</Book.Section>
-                    <Book.Table title={"3x3 Matrix"}>
-                        <thead>
-                            <tr>
-                                <th>C1</th>
-                                <th>C2</th>
-                                <th>C3</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>R1,1</td>
-                                <td>R1,2</td>
-                                <td>R1,3</td>
-                            </tr>
-                            <tr>
-                                <td>R3,1</td>
-                                <td>R3,2</td>
-                                <td>R3,3</td>
-                            </tr>
-                            <tr>
-                                <td>R3,1</td>
-                                <td>R3,2</td>
-                                <td>R3,3</td>
-                            </tr>
-                        </tbody>
-                    </Book.Table>
-                    <Lipsum />
+                <Book.Chapter title={"Chapter 1"}>
+                    <div className={"column2"}>
+                        <Lipsum count={1} dropcap />
+                    </div>
+                    <Book.Section title={"Section 1"}>
+                        This is a Section
+                        <p>
+                            This paragraph will contain things that <dfn data-index-term="foo,bar|baz">will show up in the Index</dfn>
+                        </p>
+                        <Lipsum count={1} />
+                        <ul>
+                            <li>Bullet List Alpha</li>
+                            <li>Bullet List Bravo</li>
+                            <li>Bullet List Charlie</li>
+                            <li>Bullet List Delta</li>
+                        </ul>
+                        <ol>
+                            <li>Numbered List Alpha</li>
+                            <li>Numbered List Bravo</li>
+                            <li>Numbered List Charlie</li>
+                            <li>Numbered List Delta</li>
+                        </ol>
+                        <dl>
+                            <dt>Foo</dt>
+                            <dd>Definition of Foo</dd>
+                            <dt>Bar</dt>
+                            <dd>Definition of Bar</dd>
+                            <dt>A longer term to define</dt>
+                            <dd>This is a definition</dd>
+                            <dt>Test</dt>
+                            <dd>
+                                This is a definition with some really long text. This is a definition with some really long text. This is a definition with some really long text. This is a definition
+                                with some really long text.{" "}
+                            </dd>
+                        </dl>
+                        <Book.Subsection title={"Subsection"}>
+                            <Lipsum count={3} />
+                            <hr />
+                            <Lipsum count={1} />
+                        </Book.Subsection>
+                        <Book.Table title={"A Table with a Head"}>
+                            <thead>
+                                <tr>
+                                    <th>C1</th>
+                                    <th>C2</th>
+                                    <th>C3</th>
+                                    <th>C3</th>
+                                    <th>C3</th>
+                                    <th>C3</th>
+                                    <th>C3</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>R1,1</td>
+                                    <td>R1,2</td>
+                                    <td>R1,2</td>
+                                    <td>R1,2</td>
+                                    <td>R1,2</td>
+                                    <td>R1,2</td>
+                                    <td>R1,3</td>
+                                </tr>
+                                <tr>
+                                    <td>R3,1</td>
+                                    <td>R3,1</td>
+                                    <td>R3,1</td>
+                                    <td>R3,1</td>
+                                    <td>R3,1</td>
+                                    <td>R3,2</td>
+                                    <td>R3,3</td>
+                                </tr>
+                                <tr>
+                                    <td>R3,1</td>
+                                    <td>R3,2</td>
+                                    <td>R3,2</td>
+                                    <td>R3,2</td>
+                                    <td>R3,2</td>
+                                    <td>R3,2</td>
+                                    <td>R3,3</td>
+                                </tr>
+                            </tbody>
+                        </Book.Table>
+                    </Book.Section>
+                    <Lipsum count={2} />
                     <Book.Table title={"A table with no head"}>
                         <tr>
                             <th>R1,1</th>
@@ -102,16 +148,23 @@ const Sample = async () => {
                             <td>R3,3</td>
                         </tr>
                     </Book.Table>
+                    <Lipsum count={2} />
+                </Book.Chapter>
+                <Book.Interlude title={"Some Interlude"}>
+                    <Lipsum />
+                </Book.Interlude>
+                <Book.Chapter title={"Sprockets"}>
                     <Lipsum />
                 </Book.Chapter>
-                <Book.Interlude title={"A Short Story"}>Some Interlude</Book.Interlude>
-                <Book.Chapter title={"Sprockets"}>
-                    <p>
-                        A thing about sprockets <dfn data-index-term="chicken,roasted|popcorn">test</dfn>
-                    </p>
-                </Book.Chapter>
-                <Book.Supplemental title={"Afterwords"}></Book.Supplemental>
-                <Book.Referential title={"Glossary"}>Test Entry</Book.Referential>
+                <Book.Supplemental title={"Afterwords"}>
+                    <Lipsum count={2} />
+                </Book.Supplemental>
+                <Book.Referential title={"Glossary"}>
+                    <dl>
+                        <dd>Foo</dd>
+                        <dt>Definition of Foo</dt>
+                    </dl>
+                </Book.Referential>
                 <Book.Referential title={"Index"}>
                     <nav className={"idx"} id={"target-idx"}></nav>
                 </Book.Referential>

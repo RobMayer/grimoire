@@ -26,7 +26,6 @@
         font-variant: var(--trim-text-variant);
         font-weight: var(--trim-text-weight);
         font-size: var(--trim-text-size);
-        color: var(--page-color);
     }
     @top-center {
         text-align: center;
@@ -46,7 +45,6 @@
         font-variant: var(--trim-text-variant);
         font-weight: var(--trim-text-weight);
         font-size: var(--trim-text-size);
-        color: var(--page-color);
     }
     @top-right-corner {
         padding: var(--room) var(--room) 0 0;
@@ -224,7 +222,7 @@
     @top-center {
         font-size: 22pt;
         border-bottom: 1px solid var(--page-color);
-        content: string(region-title, first);
+        content: string(region-token, first) " - " string(region-title, first);
         margin-block: calc(var(--room) * 2);
         margin-inline: calc(var(--room) * -1);
         color: var(--page-color);

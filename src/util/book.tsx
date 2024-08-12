@@ -62,29 +62,29 @@ export namespace Book {
                 num -= val[i];
             }
         }
-
         return roman;
     }
 
-    type Ctx = {
-        table: number;
-        diagram: number;
-        figure: number;
+    const dataContext = {
+        table: 0,
+        diagram: 0,
+        figure: 0,
     };
 
-    const outlineContext: {
-        token: string;
-        sections: Ctx[];
-    }[] = [];
+    const resetContext = () => {
+        Object.keys(dataContext).forEach((k) => {
+            dataContext[k as keyof typeof dataContext] = 0;
+        });
+    };
+
+    const outlineCounter: number[] = [];
+    const tlTokens: string[] = [];
 
     const byFamilyCounters = {
         sidematter: 0,
         chapter: 0,
         interlude: 0,
     };
-
-    let tlCounter = 0;
-    let scCounter = 0;
 
     const typeToFamily = {
         supplemental: "sidematter",
@@ -99,32 +99,33 @@ export namespace Book {
         interlude: (n: number) => toLatin(n).toLowerCase(),
     };
 
+    const prefixByType = {
+        table: "Table",
+        figure: "Figure",
+        diagram: "Diagram",
+    };
+
     const TopLevel = ({ children, title, className, type }: { children?: Grimoire.Element; title: string; className?: string; type: "supplemental" | "referential" | "chapter" | "interlude" }) => {
         const family = typeToFamily[type];
         byFamilyCounters[family]++;
-        tlCounter++;
 
-        const typeCounter = byFamilyCounters[family];
+        if (outlineCounter.length < 1) {
+            outlineCounter.push(...Array(1 - outlineCounter.length).fill(0, 0));
+        }
+        outlineCounter.splice(1);
+        const tlCounter = ++outlineCounter[0];
 
-        const token = tokenByFamily[family](typeCounter);
+        const fmCounter = byFamilyCounters[family];
+        const token = tokenByFamily[family](fmCounter);
 
-        outlineContext.push({
-            token,
-            sections: [
-                {
-                    table: 0,
-                    diagram: 0,
-                    figure: 0,
-                },
-            ],
-        });
-        scCounter = 0;
+        tlTokens.push(token);
+        resetContext();
 
         return (
-            <article className={`${type} ${className ?? ""}`} data-outline-depth={`${type} outline section figure table diagram`}>
+            <article className={`${type} ${className ?? ""}`} data-outline-depth={`${type} outline section subsection figure table diagram`}>
                 <h2
                     id={`outline-${[token, 0].join("_")}`}
-                    data-outline-target={`${type} outline`}
+                    data-outline-target={`${type} subsection section outline`}
                     data-outline-sort={[tlCounter, 0].join(".")}
                     data-outline-slug={`${token} - ${title}`}
                     data-outline-token={token}
@@ -132,7 +133,7 @@ export namespace Book {
                     data-outline-prefix={""}
                     data-running-region-title={title}
                     data-running-region-counter={tlCounter}
-                    data-running-region-iter={typeCounter}
+                    data-running-region-iter={fmCounter}
                     data-running-region-token={token}
                     data-running-region-slug={`${[token, 0].join(".")} - ${title}`}
                 >
@@ -165,19 +166,19 @@ export namespace Book {
     );
 
     export const Section = ({ children, title, className }: { children?: Grimoire.Element; title: string; className?: string }) => {
-        scCounter++;
-        outlineContext[tlCounter - 1].sections.push({
-            table: 0,
-            diagram: 0,
-            figure: 0,
-        });
-        const tlToken = outlineContext[tlCounter - 1].token;
+        if (outlineCounter.length < 2) {
+            outlineCounter.push(...Array(2 - outlineCounter.length).fill(0, 0));
+        }
+        outlineCounter.splice(2);
+        const scCounter = ++outlineCounter[1];
+        const tlCounter = outlineCounter[0];
+        const tlToken = tlTokens[tlCounter - 1];
 
         return (
-            <section className={`section ${className ?? ""}`} data-outline-depth={"section outline"}>
+            <section className={`section ${className ?? ""}`} data-outline-depth={"section subsection outline"}>
                 <h3
                     id={`outline-${[tlToken, scCounter].join("_")}`}
-                    data-outline-target={"section outline"}
+                    data-outline-target={"subsection section outline"}
                     data-outline-sort={[tlToken, scCounter].join(".")}
                     data-outline-slug={`${[tlToken, scCounter].join(".")} - ${title}`}
                     data-outline-token={[tlToken, scCounter].join(".")}
@@ -194,20 +195,53 @@ export namespace Book {
         );
     };
 
-    export const Figure = ({ children, title, className }: { children?: Grimoire.Element; title: string; className?: string }) => {
-        const figureCounter = ++outlineContext[tlCounter - 1].sections[scCounter].figure;
-        const tlToken = outlineContext[tlCounter - 1].token;
+    export const Subsection = ({ children, title, className }: { children?: Grimoire.Element; title: string; className?: string }) => {
+        if (outlineCounter.length < 3) {
+            outlineCounter.push(...Array(3 - outlineCounter.length).fill(0, 0));
+        }
+        outlineCounter.splice(3);
+        const subSectionCounter = ++outlineCounter[2];
+        const sectionCounter = outlineCounter[1];
+        const tlCounter = outlineCounter[0];
+        const tlToken = tlTokens[tlCounter - 1];
 
         return (
-            <figure className={`figure ${className ?? ""}`}>
-                <figcaption
-                    id={`figure-${[tlToken, scCounter, figureCounter].join("_")}`}
-                    data-outline-target={"figure"}
-                    data-outline-sort={[tlCounter, scCounter, figureCounter].join(".")}
-                    data-outline-slug={`Figure ${[tlToken, scCounter, figureCounter].join(".")} - ${title}`}
-                    data-outline-token={[tlToken, scCounter, figureCounter].join(".")}
+            <section className={`subsection ${className ?? ""}`} data-outline-depth={"subsection outline"}>
+                <h4
+                    id={`subsection-${[tlToken, sectionCounter, subSectionCounter].join("_")}`}
+                    data-outline-target={"subsection outline"}
+                    data-outline-sort={[tlToken, sectionCounter, subSectionCounter].join(".")}
+                    data-outline-slug={`${[tlToken, sectionCounter, subSectionCounter].join(".")} - ${title}`}
+                    data-outline-token={[tlToken, sectionCounter, subSectionCounter].join(".")}
                     data-outline-title={title}
-                    data-outline-prefix={"Figure"}
+                    data-outline-prefix={""}
+                    data-running-section-slug={`${[tlToken, sectionCounter, subSectionCounter].join(".")} - ${title}`}
+                    data-running-section-title={title}
+                    data-running-section-token={[tlToken, sectionCounter, subSectionCounter].join(".")}
+                >
+                    {title}
+                </h4>
+                {children}
+            </section>
+        );
+    };
+
+    const DataElement = ({ children, title, className, type }: { children?: Grimoire.Element; title: string; className?: string; type: keyof typeof dataContext }) => {
+        const tlCounter = outlineCounter[0];
+        const tlToken = tlTokens[tlCounter - 1];
+        const deCounter = ++dataContext[type];
+        const prefix = prefixByType[type];
+
+        return (
+            <figure className={`${type} ${className ?? ""}`}>
+                <figcaption
+                    id={`${type}-${[tlToken, deCounter].join("_")}`}
+                    data-outline-target={type}
+                    data-outline-sort={[tlCounter, deCounter].join(".")}
+                    data-outline-slug={`${prefix} ${[tlToken, deCounter].join(".")} - ${title}`}
+                    data-outline-token={[tlToken, deCounter].join(".")}
+                    data-outline-title={title}
+                    data-outline-prefix={prefix}
                 >
                     {title}
                 </figcaption>
@@ -216,25 +250,23 @@ export namespace Book {
         );
     };
 
-    export const Table = ({ children, title, className }: { children?: Grimoire.Element; title: string; className?: string }) => {
-        const tableCounter = ++outlineContext[tlCounter - 1].sections[scCounter].table;
-        const tlToken = outlineContext[tlCounter - 1].token;
+    export const Figure = ({ children, title, className }: { children?: Grimoire.Element; title: string; className?: string }) => (
+        <DataElement title={title} className={className} type={"figure"}>
+            {children}
+        </DataElement>
+    );
+    export const Table = ({ children, title, className }: { children?: Grimoire.Element; title: string; className?: string }) => (
+        <DataElement title={title} className={className} type={"table"}>
+            <table>{children}</table>
+        </DataElement>
+    );
 
+    export const Sidebar = ({ children, title, className }: { children?: Grimoire.Element; title?: string; className?: string }) => {
         return (
-            <figure className={`table ${className ?? ""}`}>
-                <figcaption
-                    id={`table-${[tlToken, scCounter, tableCounter].join("_")}`}
-                    data-outline-target={"table"}
-                    data-outline-sort={[tlCounter, scCounter, tableCounter].join(".")}
-                    data-outline-slug={`Table ${[tlToken, scCounter, tableCounter].join(".")} - ${title}`}
-                    data-outline-token={[tlToken, scCounter, tableCounter].join(".")}
-                    data-outline-title={title}
-                    data-outline-prefix={"Table"}
-                >
-                    {title}
-                </figcaption>
-                <table>{children}</table>
-            </figure>
+            <aside className={className}>
+                {title ? <figcaption>{title}</figcaption> : null}
+                {children}
+            </aside>
         );
     };
 }

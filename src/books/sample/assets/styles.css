@@ -65,8 +65,8 @@ mark {
     background: none;
 }
 hr {
-    border-color: currentColor;
-    border-style: solid;
+    border: none;
+    border-top: 1px solid currentColor;
 }
 a {
     color: inherit;
@@ -96,6 +96,10 @@ figure > figcaption {
     }
 }
 
+figure > table {
+    width: 100%;
+}
+
 h2 {
     font-size: 22pt;
     text-align: center;
@@ -105,20 +109,22 @@ h2 {
 
 h3 {
     font-size: 16pt;
-    margin-block: 0.25em;
+    margin-block: 0.5em 0.25em;
     padding-inline: 0.25em;
     border-bottom: 1px solid currentColor;
 }
 
 h4 {
     font-size: 12pt;
-    margin-block: 0.25em;
+    margin-block: 0.5em 0.25em;
     padding-inline: 0.25em;
-    border-bottom: 1px solid currentColor;
+    font-variant: normal;
+    font-weight: bold;
 }
 
 article > h2,
-section > h3 {
+section > h3,
+section > h4 {
     break-after: avoid;
 }
 
@@ -312,4 +318,77 @@ hgroup {
     div.author {
         font-size: 16pt;
     }
+}
+
+p {
+    text-indent: 1em;
+    margin-block: 0.5em;
+}
+
+p.dropcap {
+    text-indent: 0;
+}
+p.dropcap::first-letter {
+    initial-letter: 2;
+    font-family: "Trebuchet MS";
+    color: var(--page-color);
+    padding-right: 0.25em;
+}
+
+ul,
+ol {
+    list-style: outside;
+    margin-left: 1em;
+}
+
+ul li,
+ol li {
+    margin-left: 0.625em;
+    margin-block: 0.25em;
+}
+
+ol li::marker {
+    content: counter(list-item, decimal) " ";
+}
+
+ul li::marker {
+    content: "\2022  ";
+}
+
+ul li::marker,
+ol li::marker {
+    font-family: "Trebuchet MS";
+    font-weight: bold;
+    color: var(--page-color);
+    font-size: 10pt;
+}
+
+dl {
+    display: grid;
+    grid-template-columns: minmax(6em, 20%) 1fr;
+    gap: 0.25em 0.5em;
+    margin: 0.5em;
+}
+
+dt {
+    text-align: right;
+    font-family: "Trebuchet MS";
+    font-weight: bold;
+    color: var(--page-color);
+    font-size: 10pt;
+    padding: 1pt;
+}
+
+hr {
+    width: 75%;
+    margin-inline: auto;
+    margin-block: 0.75em;
+    border-top: 3px double var(--color-trim);
+
+    border-radius: 3px;
+}
+
+div.column2 {
+    column-count: 2;
+    column-gap: 0.125in;
 }

@@ -159,11 +159,11 @@
     }
 
     function setupToc(content) {
-        const outlineElements = [...content.querySelectorAll("[data-outline-target~=outline]")];
+        const outlineElements = [...content.querySelectorAll("[data-outline-target~=section]")];
         const target = content.querySelector("nav#target-toc");
         const listItems = outlineElements
             .map((each) => {
-                const depth = depthQuery(each, "[data-outline-depth~=outline]");
+                const depth = depthQuery(each, "[data-outline-depth~=section]");
                 return `<a data-link-page="${each.id}" data-navlist-depth="${depth}" style="--trh-outline-depth: ${depth};">
                     <span class="title" data-marker-token="${each.dataset.outlineToken}" data-marker-prefix="${each.dataset.outlinePrefix}">${each.dataset.outlineTitle}</span>
                     <span class="leader"></span>
