@@ -63,8 +63,6 @@
             ancestor = ancestor.parentElement;
         }
 
-        console.log(res);
-
         return res;
     }
 
@@ -108,7 +106,6 @@
             // uniqify and populate page numbers in xref index
 
             document.querySelectorAll("[data-xref-index]").forEach((el) => {
-                console.log(el);
                 const toList = {};
                 const ids = el.dataset.xrefIndex.split("|").map((e) => e.trim());
                 ids.forEach((id) => {
@@ -126,9 +123,6 @@
                     const tkn = toList[pg];
                     return `<a href="#${pg}">${tkn}</a>`;
                 });
-
-                console.log(toList);
-
                 el.innerHTML = linkList.join(", ");
             });
 
@@ -244,12 +238,8 @@
             });
         });
 
-        console.log(lookups);
-
         const target = content.querySelector("nav#target-idx");
-
         const keys = Object.keys(lookups).sort();
-
         const listItems = keys.reduce((acc, k) => {
             const res = [];
             if (lookups[k].refs.length === 0) {
@@ -300,74 +290,9 @@
                 page.element.style.setProperty("--pagedjs-string-first-focus-slug", `${page.element.style.getPropertyValue("--pagedjs-string-first-section-slug-fallback")}`);
             }
 
-            console.log(page);
-
             mode = nMode;
         });
     }
 
     Paged.registerHandlers(handlers);
-
-    // function prepDataForOutline(content) {
-    //     content.querySelectorAll("g-supplemental, g-referential").forEach((division, divNo) => {
-    //         division.dataset.outlineNumber = divNo + 1;
-    //         division.dataset.outlineDepth = 1;
-    //         division.dataset.outlineMarker = toLatin(divNo + 1);
-
-    //         division.querySelectorAll("section").forEach((section, secNo) => {
-    //             section.dataset.outlineNumber = secNo + 1;
-    //             section.dataset.outlineDepth = 2;
-    //             section.dataset.outlineMarker = divNo + 1;
-    //         });
-    //     });
-
-    //     content.querySelectorAll("g-chapter").forEach((division, cnt) => {
-    //         division.dataset.outlineNumber = cnt + 1;
-    //         division.dataset.outlineDepth = 1;
-    //         division.dataset.outlineMarker = toRoman(cnt + 1);
-
-    //         division.querySelectorAll("section").forEach((section, secNo) => {
-    //             section.dataset.outlineNumber = secNo + 1;
-    //             section.dataset.outlineDepth = 2;
-    //             section.dataset.outlineMarker = divNo + 1;
-    //         });
-    //     });
-
-    //     content.querySelectorAll("g-interlude").forEach((division, cnt) => {
-    //         division.dataset.outlineNumber = cnt + 1;
-    //         division.dataset.outlineDepth = 1;
-    //         division.dataset.outlineMarker = toRoman(cnt + 1).toLowerCase();
-
-    //         division.querySelectorAll("section").forEach((section, secNo) => {
-    //             section.dataset.outlineNumber = secNo + 1;
-    //             section.dataset.outlineDepth = 2;
-    //             section.dataset.outlineMarker = divNo + 1;
-    //         });
-    //     });
-
-    //     const chapters = content.querySelectorAll("g-chapter");
-    //     chapters.forEach((chapter, chNo) => {
-    //         chapter.dataset.chapterNumber = chNo + 1;
-    //         const title = chapter.querySelectorAll(":scope > h2");
-    //         chapter.dataset.chapterName = title?.innerText ?? "";
-
-    //         chapter.querySelectorAll("section").forEach((section, seNo) => {
-    //             section.dataset.sectionNumber = seNo + 1;
-    //             const title = chapter.querySelectorAll(":scope > h3");
-    //             chapter.dataset.sectionName = title?.innerText ?? "";
-    //         });
-    //     });
-    // }
-
-    // function handleNotes(content) {
-    //     const elements = content.querySelectorAll("figure:has(cite), aside:has(cite)");
-
-    //     elements.forEach((el) => {
-    //         let idx = 0;
-    //         el.querySelectorAll("cite").forEach((ref) => {
-    //             idx++;
-    //             const a = document.createElement("a");
-    //         });
-    //     });
-    // }
 })();
