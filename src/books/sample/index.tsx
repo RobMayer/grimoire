@@ -1,79 +1,175 @@
 import { readFile } from "fs/promises";
-import { resetCSS, Grimoire } from "../../util/grimoire";
+import { Grimoire } from "../../util/grimoire";
 import { Lipsum } from "../../widgets/lipsum";
-import { fixStyles, pageStyles } from "./pagestyles";
+import { Book } from "../../util/book";
 
 const Sample = async () => {
-    const styles = await readFile(`${__dirname}/assets/styles.css`, "utf-8");
-    const script = await readFile(`${__dirname}/../../util/toc.js`, "utf-8");
+    const postJS = await readFile(`${__dirname}/../../util/postprocess.js`, "utf-8");
 
     return (
         <html>
             <head>
-                <style>{resetCSS}</style>
-                <style>{pageStyles}</style>
-                <style>{styles}</style>
-                <style data-pagedjs-ignore>{fixStyles}</style>
-                <script src={"https://unpkg.com/pagedjs@0.5.0-beta.1/dist/paged.polyfill.min.js"}></script>
-                <script type="text/javascript">{script}</script>
+                <link rel={"stylesheet"} href={`${__dirname}/assets/fonts.css`} />
+                <link rel={"stylesheet"} href={`${__dirname}/assets/pages.css`} />
+                <link rel={"stylesheet"} href={`${__dirname}/assets/styles.css`} />
+                <link data-pagedjs-ignore rel={"stylesheet"} href={`${__dirname}/assets/post.css`} />
+
+                <script src={"../lib/paged.canary.polyfill.min.js"}></script>
                 <title>Style Document Test</title>
             </head>
             <body>
                 <hgroup>
-                    <h1>Book Title</h1>
-                    <p>Subtitle</p>
-                    <address>Author</address>
-                    <var>v1.0</var>
+                    <div>
+                        <h1>Doc Test</h1>
+                        <div class="subtitle">A Sandbox to test Styles in</div>
+                    </div>
+                    <div>
+                        <div class="author" data-book-author>
+                            ThatRobHuman
+                        </div>
+                        <div class="edition" data-book-edition>
+                            v1.0
+                        </div>
+                    </div>
                 </hgroup>
-                <header>
-                    <h2>Table of Contents</h2>
-                    <nav id="toc"></nav>
-                </header>
-                <header>
-                    <h2>Table of Figures</h2>
-                    <nav>This will be the TOF</nav>
-                </header>
-                <header>
-                    <h2>Preface</h2>
-                    <article>
-                        <Lipsum />
-                    </article>
-                </header>
-                <main>
-                    <h2>Chapter 1 Title</h2>
-                    <article>
+                <Book.Referential title={"Table of Contents"}>
+                    <nav className={"toc"} id={"target-toc"}></nav>
+                </Book.Referential>
+                <Book.Referential title={"Figures and Tables"}>
+                    <nav className={"tof"} id={"target-tof"}></nav>
+                </Book.Referential>
+                <Book.Supplemental title={"Preface"}>
+                    <Lipsum count={2} />
+                    <Book.Section title={"Section One"}>
+                        <Lipsum count={2} />
+                    </Book.Section>
+                    <Lipsum count={2} />
+                </Book.Supplemental>
+                <Book.Chapter title={"Chapter 1"}>
+                    <div className={"column2"}>
+                        <Lipsum count={1} dropcap />
+                    </div>
+                    <Book.Section title={"Section 1"}>
+                        This is a Section
                         <p>
-                            This is a test paragraph <cite>with a footnote</cite> with more than one footenote <cite>this is the second</cite>
+                            This paragraph will contain things that <dfn data-index-term="foo,bar|baz">will show up in the Index</dfn>
                         </p>
-                        <Lipsum />
-                        <p>
-                            This is a test paragraph <cite>with a footnote</cite>
-                        </p>
-                        <Lipsum />
-                        <h3>Section 1 Header</h3>
-                        <h3>Section 2 Header</h3>
-                    </article>
-                </main>
-                <main>
-                    <h2>Chapter 2 Title</h2>
+                        <Lipsum count={1} />
+                        <ul>
+                            <li>Bullet List Alpha</li>
+                            <li>Bullet List Bravo</li>
+                            <li>Bullet List Charlie</li>
+                            <li>Bullet List Delta</li>
+                        </ul>
+                        <ol>
+                            <li>Numbered List Alpha</li>
+                            <li>Numbered List Bravo</li>
+                            <li>Numbered List Charlie</li>
+                            <li>Numbered List Delta</li>
+                        </ol>
+                        <dl>
+                            <dt>Foo</dt>
+                            <dd>Definition of Foo</dd>
+                            <dt>Bar</dt>
+                            <dd>Definition of Bar</dd>
+                            <dt>A longer term to define</dt>
+                            <dd>This is a definition</dd>
+                            <dt>Test</dt>
+                            <dd>
+                                This is a definition with some really long text. This is a definition with some really long text. This is a definition with some really long text. This is a definition
+                                with some really long text.{" "}
+                            </dd>
+                        </dl>
+                        <Book.Subsection title={"Subsection"}>
+                            <Lipsum count={3} />
+                            <hr />
+                            <Lipsum count={1} />
+                        </Book.Subsection>
+                        <Book.Table title={"A Table with a Head"}>
+                            <thead>
+                                <tr>
+                                    <th>C1</th>
+                                    <th>C2</th>
+                                    <th>C3</th>
+                                    <th>C3</th>
+                                    <th>C3</th>
+                                    <th>C3</th>
+                                    <th>C3</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>R1,1</td>
+                                    <td>R1,2</td>
+                                    <td>R1,2</td>
+                                    <td>R1,2</td>
+                                    <td>R1,2</td>
+                                    <td>R1,2</td>
+                                    <td>R1,3</td>
+                                </tr>
+                                <tr>
+                                    <td>R3,1</td>
+                                    <td>R3,1</td>
+                                    <td>R3,1</td>
+                                    <td>R3,1</td>
+                                    <td>R3,1</td>
+                                    <td>R3,2</td>
+                                    <td>R3,3</td>
+                                </tr>
+                                <tr>
+                                    <td>R3,1</td>
+                                    <td>R3,2</td>
+                                    <td>R3,2</td>
+                                    <td>R3,2</td>
+                                    <td>R3,2</td>
+                                    <td>R3,2</td>
+                                    <td>R3,3</td>
+                                </tr>
+                            </tbody>
+                        </Book.Table>
+                    </Book.Section>
+                    <Lipsum count={2} />
+                    <Book.Table title={"A table with no head"}>
+                        <tr>
+                            <th>R1,1</th>
+                            <th>R1,2</th>
+                            <th>
+                                R1,3<cite>With a footnote even</cite>
+                            </th>
+                        </tr>
+                        <tr>
+                            <td>R3,1</td>
+                            <td>R3,2</td>
+                            <td>R3,3</td>
+                        </tr>
+                        <tr>
+                            <td>R3,1</td>
+                            <td>R3,2</td>
+                            <td>R3,3</td>
+                        </tr>
+                    </Book.Table>
+                    <Lipsum count={2} />
+                </Book.Chapter>
+                <Book.Interlude title={"Some Interlude"}>
                     <Lipsum />
+                </Book.Interlude>
+                <Book.Chapter title={"Sprockets"}>
                     <Lipsum />
-                    <h3>Section 1 Header</h3>
-                    <h3>Section 2 Header</h3>
-                </main>
-                <footer>
-                    <h2>Index</h2>
-                    <nav>This will be the index</nav>
-                </footer>
-                <footer>
-                    <h2>Glossary</h2>
-                    <nav>This will be the glossary</nav>
-                </footer>
-                <footer>
-                    <h2>Afterward</h2>
-                    <Lipsum />
-                </footer>
+                </Book.Chapter>
+                <Book.Supplemental title={"Afterwords"}>
+                    <Lipsum count={2} />
+                </Book.Supplemental>
+                <Book.Referential title={"Glossary"}>
+                    <dl>
+                        <dd>Foo</dd>
+                        <dt>Definition of Foo</dt>
+                    </dl>
+                </Book.Referential>
+                <Book.Referential title={"Index"}>
+                    <nav className={"idx"} id={"target-idx"}></nav>
+                </Book.Referential>
             </body>
+            <script>{postJS}</script>
         </html>
     );
 };

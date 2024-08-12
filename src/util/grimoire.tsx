@@ -8,38 +8,98 @@ export namespace Grimoire {
         className: "class",
     };
 
-    const parse = async (element: any): Promise<string> => {
-        const content = await element;
-        if (content === false || content === null || content === undefined) {
+    const parse = (children?: (JSX.Element | JSX.Element[])[]): JSX.Element[] => {
+        if (children) {
+            return children.reduce<JSX.Element[]>((acc, each) => {
+                if (Array.isArray(each)) {
+                    acc.push(...parse(each));
+                } else {
+                    acc.push(each);
+                }
+                return acc;
+            }, []);
+        }
+        return [];
+    };
+
+    export const jsxElement = (tag: any, props: Record<string, any> = {}, ...children: JSX.Element[]): JSX.Element => {
+        const parsedChildren = parse(children);
+        if (typeof tag === "function") {
+            return {
+                func: tag,
+                props,
+                children: parsedChildren,
+            };
+        }
+
+        const attributes = Object.entries(props ?? {}).reduce<{ [key: string]: string }>((acc, [k, v]) => {
+            const name = k in ATTR_ALIASES ? ATTR_ALIASES[k] : k;
+            const value = v;
+            if (value !== undefined && value !== null) {
+                acc[name] = value;
+            }
+            return acc;
+        }, {});
+
+        return {
+            tag,
+            attributes,
+            children: SELF_CLOSING.includes(tag) ? [] : parsedChildren,
+        };
+    };
+
+    export const jsxFragment = ({ children }: { children?: JSX.Element[] }): JSX.Element => {
+        return {
+            fragment: children ?? [],
+        };
+    };
+
+    export const render = (contents: JSX.Element): string => {
+        if (contents === undefined || contents === null) {
             return "";
         }
-        return Array.isArray(content) ? (await Promise.all(content)).map(parse).join("") : content;
-    };
-
-    export const jsxElement = async (tag: any, props: Record<string, any> = {}, ...children: any[]) => {
-        const parsedChildren = await jsxFragment({ children });
-        if (typeof tag === "function") {
-            return await tag({ children: parsedChildren, ...props });
+        if (typeof contents === "string") {
+            return contents;
         }
-
-        const attributes = Object.entries(props ?? {})
-            .map(([name, value]) => `${name in ATTR_ALIASES ? ATTR_ALIASES[name] : name}="${escapeAttrib(value)}"`)
-            .join(" ");
-
-        if (SELF_CLOSING.includes(tag)) {
-            return attributes ? `<${tag} ${attributes} />` : `<${tag} />`;
-        } else {
-            return attributes ? `<${tag} ${attributes}>${parsedChildren}</${tag}>` : `<${tag}>${parsedChildren}</${tag}>`;
+        if ("fragment" in contents) {
+            return contents.fragment.map(render).join("");
         }
-    };
-
-    export const jsxFragment = async ({ children }: any) => {
-        return (await Promise.all((Array.isArray(children) ? children : [children]).map(parse))).join("");
+        if ("tag" in contents) {
+            const attributes = Object.entries(contents.attributes ?? {})
+                .map(([name, value]) => `${name in ATTR_ALIASES ? ATTR_ALIASES[name] : name}="${escapeAttrib(value)}"`)
+                .join(" ");
+            if (contents.children.length === 0) {
+                return `<${contents.tag} ${attributes}></${contents.tag}>`;
+            }
+            return `<${contents.tag} ${attributes}>${contents.children.map(render).join("")}</${contents.tag}>`;
+        }
+        if ("func" in contents) {
+            const rendered = contents.func({ children: contents.children, ...contents.props });
+            return render(rendered);
+        }
+        return "";
     };
 
     export type Element = JSX.Element;
+
+    type PlainComponent = {
+        tag: string;
+        attributes: { [key: string]: string };
+        children: Element[];
+    };
+
+    type Fragment = {
+        fragment: Element[];
+    };
+
+    type FuncComponent = {
+        func: (props: any) => Element;
+        props: { [key: string]: any };
+        children: Element[];
+    };
+
     export namespace JSX {
-        export type Element = string | null | Promise<string | null>;
+        export type Element = string | null | PlainComponent | FuncComponent | undefined | Fragment;
         export interface IntrinsicElements {
             [elemName: string]: any;
         }
@@ -47,113 +107,3 @@ export namespace Grimoire {
 }
 
 export const css = (str: TemplateStringsArray, ...args: any[]) => `<style> @scope { :scope {${str.reduce((acc, each) => `${acc}${args.shift()}${each}`)}}}</style>`;
-
-export const resetCSS = `
-                * {
-                    margin: 0;
-                    padding: 0;
-                    box-sizing: content-box;
-                    font-size: 100%;
-                    vertical-align: baseline;
-                    font: inherit;
-                    text-decoration: none;
-                    font-weight: normal;
-                    font-style: normal;
-                    white-space: normal;
-                    line-height: inherit;
-                }
-                html {
-                    line-height: 1;
-                }
-                ol, ul {
-                    list-style: none;
-                }
-                q, blockquote {
-                    quotes: none;
-                }
-                blockquote:before, blockquote:after,
-                q:before, q:after {
-	                content: '';
-	                content: none;
-                }
-                table {
-	                border-collapse: collapse;
-	                border-spacing: 0;
-                }
-                mark {
-                    background: none;
-                }
-                hr {
-                    border-color: currentColor;
-                }
-            `;
-
-const generateStyled = (tag: string) => {
-    return (str: TemplateStringsArray, ...args: any[]) => {
-        const parsedCss = css(str, ...args);
-        return ({ children, ...props }: any) => Grimoire.jsxElement(tag, props, parsedCss, children);
-    };
-};
-
-export const styled = {
-    div: generateStyled("div"),
-    span: generateStyled("span"),
-
-    h1: generateStyled("h1"),
-    h2: generateStyled("h2"),
-    h3: generateStyled("h3"),
-    h4: generateStyled("h4"),
-    h5: generateStyled("h5"),
-    h6: generateStyled("h6"),
-    hgroup: generateStyled("hgroup"),
-
-    hr: generateStyled("hr"),
-
-    ul: generateStyled("ul"),
-    ol: generateStyled("ol"),
-    dl: generateStyled("dl"),
-    dt: generateStyled("dt"),
-    dd: generateStyled("dd"),
-    li: generateStyled("li"),
-
-    body: generateStyled("body"),
-    main: generateStyled("main"),
-    section: generateStyled("section"),
-    aside: generateStyled("aside"),
-    article: generateStyled("article"),
-    nav: generateStyled("nav"),
-    figure: generateStyled("figure"),
-    figcaption: generateStyled("figcaption"),
-
-    p: generateStyled("p"),
-    blockquote: generateStyled("blockquote"),
-    a: generateStyled("a"),
-
-    q: generateStyled("q"),
-    s: generateStyled("s"),
-    mark: generateStyled("mark"),
-    strong: generateStyled("strong"),
-    em: generateStyled("em"),
-    code: generateStyled("code"),
-    var: generateStyled("var"),
-
-    del: generateStyled("del"),
-    ins: generateStyled("ins"),
-    sub: generateStyled("sub"),
-    sup: generateStyled("sup"),
-    u: generateStyled("u"),
-
-    footer: generateStyled("footer"),
-    header: generateStyled("header"),
-    img: generateStyled("img"),
-    svg: generateStyled("svg"),
-
-    table: generateStyled("table"),
-    tr: generateStyled("tr"),
-    th: generateStyled("th"),
-    td: generateStyled("td"),
-    thead: generateStyled("thead"),
-    tfoot: generateStyled("tfoot"),
-    br: generateStyled("br"),
-    wbr: generateStyled("wbr"),
-};

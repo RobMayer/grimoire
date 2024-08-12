@@ -1,130 +1,394 @@
 :root {
     --color-primary: #048;
-    --color-secondary: #444;
-    --color-secondary-bg: #aaa;
+    --color-secondary: #555;
+    --color-trim: #777;
+    --color-bg: #ccc;
+
+    --body-text-font: "Bookinsanity";
+    --body-text-size: 12pt;
+
+    --header-font: "Trebuchet MS";
+    --header-variant: small-caps;
+
+    --title-font: "Trebuchet MS";
+    --title-variant: small-caps;
+
+    --trim-text-font: "Trebuchet MS";
+    --trim-text-variant: small-caps;
+    --trim-text-size: 12pt;
+    --trim-text-weight: normal;
+
+    --indicator-text-font: "Bookinsanity";
+    --indicator-text-weight: normal;
+    --indicator-text-size: 18pt;
 }
 
-/* page assignments */
-hgroup {
-    page: title;
-}
-header {
-    page: frontmatter-content;
-    break-before: page;
-}
-header:has(nav) {
-    page: frontmatter-nav;
-}
+/* RESET */
 
-main {
-    page: main;
-    break-before: page;
-}
-main:first-of-type {
-    page: main-init;
-}
-footer {
-    page: backmatter-content;
-    break-before: page;
-}
-footer:has(nav) {
-    page: backmatter-nav;
-}
-
-/* Runing Titles */
-
-hgroup h1 {
-    string-set: book-title content(text);
-}
-hgroup address {
-    string-set: book-author content(text);
-}
-hgroup var {
-    string-set: book-version content(text);
-}
-
-header h2,
-footer h2 {
-    counter-increment: frontmatter-number;
-    string-set: frontmatter-title content(text);
-}
-
-header:has(nav) h2,
-footer:has(nav) h2 {
-    position: running(frontmatter-header);
+* {
     margin: 0;
-    visibility: hidden;
+    padding: 0;
+    box-sizing: content-box;
+    font-size: inherit;
+    vertical-align: baseline;
+    font: inherit;
+    text-decoration: none;
+    font-weight: inherit;
+    font-style: normal;
+    white-space: normal;
+    line-height: inherit;
+    box-sizing: border-box;
+}
+html {
+    line-height: normal;
+}
+ol,
+ul {
+    list-style: none;
+}
+q,
+blockquote {
+    quotes: none;
+}
+blockquote:before,
+blockquote:after,
+q:before,
+q:after {
+    content: "";
+    content: none;
+}
+table {
+    border-collapse: collapse;
+    border-spacing: 0;
+}
+mark {
+    background: none;
+}
+hr {
+    border: none;
+    border-top: 1px solid currentColor;
+}
+a {
+    color: inherit;
 }
 
-main h2 {
-    string-set: chapter-title content(text);
-    counter-increment: chapter-number;
+body {
+    font-size: var(--body-text-size);
+    font-family: var(--body-text-font);
 }
 
-main h2,
-main h3 {
-    string-set: section-title content(text);
+h2,
+h3,
+h4 {
+    font-family: var(--title-font);
+    font-variant: var(--title-variant);
+    line-height: 1.3;
+    color: var(--page-color);
+    &::before {
+        content: attr(data-outline-token) " - ";
+    }
 }
 
-header h2::before {
-    content: counter(frontmatter-indicator, upper-latin) ": ";
+figure > figcaption {
+    &::before {
+        content: attr(data-outline-prefix) " " attr(data-outline-token) " - ";
+        color: var(--color-trim);
+    }
 }
 
-footer h2::before {
-    content: counter(frontmatter-indicator, upper-latin) ": ";
-}
-
-main h2::before {
-    content: counter(chapter-number, upper-roman) ": ";
+figure > table {
+    width: 100%;
 }
 
 h2 {
+    font-size: 22pt;
     text-align: center;
-    font-size: 24pt;
-    font-variant: small-caps;
-    margin-bottom: 1em;
-    align-content: center;
+    color: var(--page-color);
+    margin-bottom: 0.125in;
+}
+
+h3 {
+    font-size: 16pt;
+    margin-block: 0.5em 0.25em;
+    padding-inline: 0.25em;
     border-bottom: 1px solid currentColor;
 }
 
-main h2 {
-    color: var(--color-primary);
+h4 {
+    font-size: 12pt;
+    margin-block: 0.5em 0.25em;
+    padding-inline: 0.25em;
+    font-variant: normal;
+    font-weight: bold;
 }
 
-/* Content layout */
+article > h2,
+section > h3,
+section > h4 {
+    break-after: avoid;
+}
 
-article {
+section {
+    break-inside: avoid;
+}
+
+nav.toc,
+nav.tof {
     column-count: 2;
-    column-gap: 0.125in;
     column-fill: auto;
+    column-gap: 0.125in;
+
+    & > a {
+        display: flex;
+        gap: 0.5em;
+        margin-block: 0.25em;
+        font-family: "Trebuchet MS";
+
+        & > .title {
+            padding-left: calc((var(--trh-outline-depth) - 1) * 1em);
+            flex-grow: 0;
+            flex-shrink: 0;
+            flex-basis: fit-content;
+        }
+        & > .title::before {
+            content: attr(data-marker-prefix) " " attr(data-marker-token) " - ";
+        }
+        & > .leader {
+            flex-grow: 1;
+            flex-shrink: 1;
+            flex-basis: 0;
+            border-bottom: 1px dashed var(--color-bg);
+            margin-bottom: 0.25em;
+        }
+        & > .page {
+            flex-grow: 0;
+            flex-shrink: 0;
+            flex-basis: fit-content;
+            align-self: end;
+        }
+    }
+    & > a[data-navlist-depth="1"] > .title {
+    }
 }
 
-article p:first-of-type::first-letter {
-    initial-letter: 3;
-    color: red;
+nav.idx {
+    column-count: 2;
+    column-fill: auto;
+    column-gap: 0.125in;
+
+    & > div.topic,
+    & > div.subtopic {
+        display: flex;
+        gap: 0.5em;
+        margin-block: 0.25em;
+        font-family: "Trebuchet MS";
+
+        & > .title {
+            flex-grow: 0;
+            flex-shrink: 0;
+            flex-basis: fit-content;
+        }
+        & > .leader {
+            flex-grow: 1;
+            flex-shrink: 1;
+            flex-basis: 0;
+            border-bottom: 1px dashed var(--color-bg);
+            margin-bottom: 0.25em;
+        }
+        & > .page {
+            flex-grow: 0;
+            flex-shrink: 0;
+            flex-basis: fit-content;
+            align-self: end;
+        }
+    }
+    & > div.subtopic > .title {
+        margin-left: 1em;
+    }
 }
 
-cite {
-    float: footnote;
+[data-sidenote-marker]::marker {
+    content: "" counter(sidenode-marker) " ";
+    font-weight: bold;
+    font-family: "Trebuchet MS";
+}
+[data-footnote-marker]::marker {
+    content: "" counter(footnote-marker) " ";
+    font-weight: bold;
+    font-family: "Trebuchet MS";
 }
 
-::footnote-call {
+[data-sidenote-call]::after {
+    content: counter(sidenode);
+    font-variant-position: normal;
     font-weight: bold;
     font-size: 80%;
     vertical-align: super;
+    font-family: "Trebuchet MS";
 }
 
-::footnote-marker {
-    content: counter(footnote-marker) " - ";
+[data-footnote-call]::after {
+    content: counter(footnote);
+    font-variant-position: normal;
+    font-weight: bold;
+    font-size: 80%;
+    vertical-align: super;
+    font-family: "Trebuchet MS";
+}
+
+cite {
+    font-size: 85%;
+}
+
+table {
+    font-family: "Trebuchet MS";
+    font-size: 10.5pt;
+}
+
+th {
     font-weight: bold;
 }
 
-nav#toc ul {
-    list-style: none;
+td,
+th {
+    padding: 0pt var(--room);
+    vertical-align: bottom;
 }
-nav#toc ul li {
+
+table:has(thead):has(tbody) tbody tr:nth-child(2n + 1) {
+    background: #ddd;
+}
+
+table:not(:has(thead):has(thead)) tr:nth-child(2n) {
+    background: #ddd;
+}
+
+aside,
+figure {
+    border-top: 1px solid var(--page-color);
+    border-bottom: 1px solid var(--page-color);
+    padding: var(--less-room);
+    margin: var(--less-room);
     break-inside: avoid;
+    box-decoration-break: clone;
+
+    & > .sidenote {
+        border-top: 1px solid var(--page-color);
+        margin-top: var(--less-room);
+    }
 }
-nav#toc ul li a::after {
-    content: target-counter(attr(href), page);
+
+aside {
+    background: var(--color-bg);
+}
+
+figure {
+    width: fit-content;
+}
+
+figcaption {
+    font-family: "Trebuchet MS";
+    font-weight: bold;
+    font-variant: small-caps;
+}
+
+hgroup {
+    height: 100%;
+    padding: 0in;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    text-align: center;
+    font-family: "Trebuchet MS";
+    color: var(--color-primary);
+
+    h1 {
+        font-variant: small-caps;
+        font-size: 48pt;
+    }
+
+    div.subtitle {
+        font-size: 18pt;
+    }
+
+    div.edition {
+        font-size: 24pt;
+    }
+
+    div.author {
+        font-size: 16pt;
+    }
+}
+
+p {
+    text-indent: 1em;
+    margin-block: 0.5em;
+}
+
+p.dropcap {
+    text-indent: 0;
+}
+p.dropcap::first-letter {
+    initial-letter: 2;
+    font-family: "Trebuchet MS";
+    color: var(--page-color);
+    padding-right: 0.25em;
+}
+
+ul,
+ol {
+    list-style: outside;
+    margin-left: 1em;
+}
+
+ul li,
+ol li {
+    margin-left: 0.625em;
+    margin-block: 0.25em;
+}
+
+ol li::marker {
+    content: counter(list-item, decimal) " ";
+}
+
+ul li::marker {
+    content: "\2022  ";
+}
+
+ul li::marker,
+ol li::marker {
+    font-family: "Trebuchet MS";
+    font-weight: bold;
+    color: var(--page-color);
+    font-size: 10pt;
+}
+
+dl {
+    display: grid;
+    grid-template-columns: minmax(6em, 20%) 1fr;
+    gap: 0.25em 0.5em;
+    margin: 0.5em;
+}
+
+dt {
+    text-align: right;
+    font-family: "Trebuchet MS";
+    font-weight: bold;
+    color: var(--page-color);
+    font-size: 10pt;
+    padding: 1pt;
+}
+
+hr {
+    width: 75%;
+    margin-inline: auto;
+    margin-block: 0.75em;
+    border-top: 3px double var(--color-trim);
+
+    border-radius: 3px;
+}
+
+div.column2 {
+    column-count: 2;
+    column-gap: 0.125in;
 }

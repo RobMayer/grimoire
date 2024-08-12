@@ -3,7 +3,10 @@ import { Sample } from "./books/sample";
 import { Grimoire } from "./util/grimoire";
 
 const doTheThing = async () => {
-    writeFile("./tmp/sample.html", (await (<Sample />)) ?? "");
+    //Sample is where the magic happens
+    const thing = Grimoire.render(await Sample());
+
+    writeFile("./tmp/sample.html", thing ?? "");
 };
 
 doTheThing()
