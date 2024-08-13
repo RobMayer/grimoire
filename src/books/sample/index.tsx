@@ -2,6 +2,7 @@ import { readFile } from "fs/promises";
 import { Grimoire } from "../../util/grimoire";
 import { Lipsum } from "../../widgets/lipsum";
 import { Book } from "../../util/book";
+import { Schematic } from "../../util/schematic";
 
 const Sample = async () => {
     const postJS = await readFile(`${__dirname}/../../util/postprocess.js`, "utf-8");
@@ -12,8 +13,9 @@ const Sample = async () => {
                 <link rel={"stylesheet"} href={`${__dirname}/assets/fonts.css`} />
                 <link rel={"stylesheet"} href={`${__dirname}/assets/pages.css`} />
                 <link rel={"stylesheet"} href={`${__dirname}/assets/styles.css`} />
-                <link data-pagedjs-ignore rel={"stylesheet"} href={`${__dirname}/assets/post.css`} />
+                <link rel={"stylesheet"} href={`${__dirname}/assets/test.css`} />
 
+                {/* <script src={"../lib/paged.polyfill.min.js"}></script> */}
                 <script src={"../lib/paged.canary.polyfill.min.js"}></script>
                 <title>Style Document Test</title>
             </head>
@@ -40,9 +42,13 @@ const Sample = async () => {
                 </Book.Referential>
                 <Book.Supplemental title={"Preface"}>
                     <Lipsum count={2} />
+                    <Book.Figure title={"A Formula Test"}></Book.Figure>
                     <Book.Section title={"Section One"}>
                         <Lipsum count={2} />
                     </Book.Section>
+                    <Book.Figure title={"Test Schematic"} className={"fullWidth"}>
+                        <Schematic />
+                    </Book.Figure>
                     <Lipsum count={2} />
                 </Book.Supplemental>
                 <Book.Chapter title={"Chapter 1"}>

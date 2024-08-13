@@ -1,0 +1,29 @@
+figure {
+    width: auto;
+    break-inside: avoid;
+}
+
+figure.fullWidth {
+}
+
+svg {
+}
+
+div.schematic_wrapper {
+    width: auto;
+    height: 300px;
+    background: red;
+    break-inside: avoid;
+}
+
+svg.schematic {
+    position: absolute;
+    background: #ddd;
+    break-inside: avoid;
+    width: 100%;
+    height: 100%;
+}
+
+svg.schematic * {
+    vector-effect: non-scaling-stroke;
+}
