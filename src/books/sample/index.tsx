@@ -10,13 +10,14 @@ const Sample = async () => {
     return (
         <html>
             <head>
-                <link rel={"stylesheet"} href={`${__dirname}/assets/fonts.css`} />
-                <link rel={"stylesheet"} href={`${__dirname}/assets/pages.css`} />
-                <link rel={"stylesheet"} href={`${__dirname}/assets/styles.css`} />
-                <link rel={"stylesheet"} href={`${__dirname}/assets/test.css`} />
+                <link rel={"stylesheet"} href={`${__dirname}/assets/fonts.css?cachebust=${Math.round(Math.random() * 200)}`} />
+                <link rel={"stylesheet"} href={`${__dirname}/assets/pages.css?cachebust=${Math.round(Math.random() * 200)}`} />
+                <link rel={"stylesheet"} href={`${__dirname}/assets/styles.css?cachebust=${Math.round(Math.random() * 200)}`} />
+                <link rel={"stylesheet"} href={`${__dirname}/assets/test.css?cachebust=${Math.round(Math.random() * 200)}`} />
+                <link rel={"stylesheet"} href={`${__dirname}/assets/interface.css?cachebust=${Math.round(Math.random() * 200)}`} />
 
                 {/* <script src={"../lib/paged.polyfill.min.js"}></script> */}
-                <script src={"../lib/paged.canary.polyfill.min.js"}></script>
+                <script src={`../lib/paged.canary.polyfill.min.js?cachebust=${Math.round(Math.random() * 200)}`}></script>
                 <title>Style Document Test</title>
             </head>
             <body>
@@ -47,7 +48,7 @@ const Sample = async () => {
                         <Lipsum count={2} />
                     </Book.Section>
                     <Book.Figure title={"Test Schematic"} className={"fullWidth"}>
-                        <Schematic />
+                        <Schematic></Schematic>
                     </Book.Figure>
                     <Lipsum count={2} />
                 </Book.Supplemental>

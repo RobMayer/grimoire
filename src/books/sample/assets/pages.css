@@ -433,7 +433,6 @@ cite:not(aside *):not(figure *) {
 
 aside,
 figure {
-    break-inside: avoid;
 }
 
 [data-running-region-title] {

@@ -125,11 +125,9 @@ h4 {
 article > h2,
 section > h3,
 section > h4 {
-    break-after: avoid;
 }
 
 section {
-    break-inside: avoid;
 }
 
 nav.toc,
@@ -267,10 +265,6 @@ aside,
 figure {
     border-top: 1px solid var(--page-color);
     border-bottom: 1px solid var(--page-color);
-    padding: var(--less-room);
-    margin: var(--less-room);
-    break-inside: avoid;
-    box-decoration-break: clone;
 
     & > .sidenote {
         border-top: 1px solid var(--page-color);

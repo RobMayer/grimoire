@@ -1,5 +1,5 @@
 import { Grimoire } from "./grimoire";
 
-export const Schematic = () => {
-    return <div className={"schematic_wrapper"}></div>;
+export const Schematic = ({ children }: { children?: Grimoire.Element }) => {
+    return <div className={"schematic_wrapper"}>{children}</div>;
 };
